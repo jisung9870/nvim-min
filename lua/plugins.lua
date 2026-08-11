@@ -25,6 +25,7 @@ end
 vim.pack.add({
   { src = gh("catppuccin/nvim"), name = "catppuccin" },
   { src = gh("nvim-treesitter/nvim-treesitter"), version = "main" },
+  { src = gh("MeanderingProgrammer/render-markdown.nvim") },
   { src = gh("neovim/nvim-lspconfig") },
   { src = gh("mason-org/mason.nvim") },
   { src = gh("Saghen/blink.cmp"), version = vim.version.range("1") },

@@ -29,7 +29,7 @@ spec 필드도 4개다: `src`, `name`, `version`, `data`.
 - 시작이 150ms를 넘을 때
 - nvim-dap + neotest급 스택이 필요해질 때
 
-현재: 플러그인 17개, 시작 **137ms** (같은 머신·같은 파일에서 LazyVim은 273–413ms).
+현재: 플러그인 18개 (같은 머신·같은 파일에서 기존 17개 구성은 137ms, LazyVim은 273–413ms).
 
 ## 구조
 
@@ -47,6 +47,7 @@ lua/
   lsp.lua             vim.lsp.config / vim.lsp.enable + mason
   completion.lua      blink.cmp
   editing.lua         포맷 / 린트 / 괄호 / surround / 한영전환 / which-key
+  markdown.lua        Markdown 내부 렌더링 + 체크박스·콜아웃 완성
   finder.lua          snacks picker·explorer + 검색 키맵
   git.lua             gitsigns + diffview
   terminal.lua        toggleterm + tmux navigator
@@ -59,12 +60,13 @@ nvim-pack-lock.json   플러그인 리비전 잠금 — git으로 추적한다
 `theme.lua`와 `statusline.lua`만 서로 의존하고, 나머지 모듈은 독립적이다.
 하나를 지워도 다른 게 깨지지 않는다.
 
-## 플러그인 17개
+## 플러그인 18개
 
 | 플러그인 | 역할 |
 |---|---|
 | catppuccin/nvim | 테마 (mocha) |
 | nvim-treesitter (`main`) | 파서 설치. 하이라이트는 nvim 내장이 처리 |
+| render-markdown.nvim | 제목·목록·체크박스·표·코드 블록을 Neovim 안에서 렌더링 |
 | nvim-lspconfig | 서버 기본값(`lsp/*.lua`) 제공. 옛 `setup{}` API는 안 씀 |
 | mason.nvim | LSP/린터/포매터 바이너리 설치 |
 | blink.cmp | 자동완성 (릴리스 태그 = 미리 빌드된 Rust 바이너리) |
@@ -90,7 +92,9 @@ nvim-pack-lock.json   플러그인 리비전 잠금 — git으로 추적한다
 
 서버 목록은 실측 작업 스택 기준이다 (YAML > Jenkinsfile > Python > Terraform > SQL > Go).
 
-`lua_ls` `yamlls` `jsonls` `terraformls` `pyright` `ruff` `gopls` `bashls`
+`lua_ls` `yamlls` `jsonls` `terraformls` `pyright` `ruff` `gopls` `bashls` `marksman`
+
+Markdown은 `marksman`이 문서 심볼, 링크 이동, 참조, 자동완성을 제공한다.
 
 Jenkinsfile은 **treesitter 하이라이트만** 된다. Groovy LSP는 JDK가 필요한데
 설치되어 있지 않다. Jenkins 서버 린터 연동은 아직 옮기지 않았다 (아래 "안 옮긴 것" 참고).
@@ -167,7 +171,7 @@ gitui나 Claude Code처럼 ESC를 직접 받아야 하는 TUI는 영향받지 �
 
 ### 토글 (`<leader>u`)
 
-`uf` 자동포맷(전역) · `uF` 자동포맷(버퍼) · `uw` wrap · `ul` 줄번호 · `ud` 진단 · `uh` inlay hint
+`uf` 자동포맷(전역) · `uF` 자동포맷(버퍼) · `uw` wrap · `ul` 줄번호 · `ud` 진단 · `uh` inlay hint · `um` Markdown 렌더링
 
 ## 유지보수
 

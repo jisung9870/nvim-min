@@ -28,6 +28,7 @@ local servers = {
   "ruff",
   "gopls",
   "bashls",
+  "marksman",
 }
 
 -- mason 패키지 이름 (LSP 이름과 다름)
@@ -40,6 +41,7 @@ local mason_packages = {
   "ruff",
   "gopls",
   "bash-language-server",
+  "marksman",
   -- 린터/포매터
   "yamllint",
   "actionlint",
