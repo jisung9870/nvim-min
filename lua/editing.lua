@@ -25,7 +25,11 @@ require("conform").setup({
     sh = { "shfmt" },
     bash = { "shfmt" },
     lua = { "stylua" },
+    toml = { "taplo" },
     python = { "ruff_organize_imports", "ruff_format" },
+    -- SQL은 의도적으로 비워 둔다. sqlfluff fix는 쿼리를 크게 다시 쓰므로
+    -- 저장할 때마다 돌리기엔 위험하다. 진단만 받고, 고칠 때는 직접 부른다.
+    sql = {},
     json = { "prettier" },
     jsonc = { "prettier" },
     yaml = { "prettier" },
@@ -77,14 +81,32 @@ end, { bang = true, desc = "자동 포맷 토글 (!는 현재 버퍼만)" })
 -- shellcheck는 bashls가 알아서 물고 오므로 여기 없다 (중복 진단 방지).
 local lint = require("lint")
 
+-- yaml.ansible이 여기 없는 이유: ansiblels가 ansible-lint를 직접 돌리고,
+-- ansible-lint는 yamllint 규칙을 이미 포함한다. 넣으면 같은 진단이 두 번 뜬다.
 lint.linters_by_ft = {
   yaml = { "yamllint" },
-  ["yaml.ansible"] = { "yamllint" },
   ["yaml.ghaction"] = { "actionlint" },
   terraform = { "tflint" },
   tf = { "tflint" },
   ["terraform-vars"] = { "tflint" },
+  dockerfile = { "hadolint" },
+  sql = { "sqlfluff" },
 }
+
+-- sqlfluff는 방언을 모르면 실행 자체가 실패한다. 저장소에 .sqlfluff가 있으면
+-- 그쪽이 이기고, 없을 때 쓸 기본값만 여기서 준다.
+--   lua/local.lua 에서:  vim.g.sql_dialect = "postgres"
+lint.linters.sqlfluff = vim.tbl_deep_extend("force", lint.linters.sqlfluff, {
+  args = {
+    "lint",
+    "--format=json",
+    "--dialect",
+    function()
+      return vim.g.sql_dialect or "ansi"
+    end,
+    "-",
+  },
+})
 
 vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
   group = vim.api.nvim_create_augroup("nvim_lint", { clear = true }),

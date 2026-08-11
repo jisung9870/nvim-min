@@ -84,6 +84,49 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 -- ============================================================================
 -- filetype 감지 (LazyVim이 해주던 것들)
 -- ============================================================================
+-- 우선순위를 명시하는 이유: Neovim은 패턴을 우선순위 내림차순으로 보되,
+-- 0 이하인 패턴은 확장자 표(`yml` → `yaml`)를 조회한 **뒤에** 본다. 기본값
+-- 그대로 두면 확장자가 먼저 이겨서 아래 규칙이 영영 안 걸린다.
+local PATH_RULE = 10 -- 경로로 확정되는 것
+local CONTENT_RULE = 1 -- 내용을 봐야 아는 것. 경로 규칙에 진 다음에 온다.
+
+local function by_path(filetype)
+  return { filetype, { priority = PATH_RULE } }
+end
+
+local patterns = {
+  ["Jenkinsfile.*"] = by_path("groovy"),
+  [".*%.jenkinsfile"] = by_path("groovy"),
+  [".*/%.github/workflows/.*%.ya?ml"] = by_path("yaml.ghaction"),
+  [".*/playbooks/.*%.ya?ml"] = by_path("yaml.ansible"),
+  [".*/nginx/.*%.conf"] = by_path("nginx"),
+  [".*/templates/.*%.ya?ml"] = by_path("helm"),
+  -- 차트의 _helpers.tpl은 기본 감지가 smarty로 잡는다
+  [".*/templates/.*%.tpl"] = by_path("helm"),
+}
+
+-- role 하위 디렉터리. Lua 패턴에는 (a|b) 교대가 없어서 하나씩 만든다.
+for _, dir in ipairs({ "tasks", "handlers", "vars", "defaults", "meta" }) do
+  patterns[".*/roles/.*/" .. dir .. "/.*%.ya?ml"] = by_path("yaml.ansible")
+end
+
+-- 경로 규칙에 안 걸리는 플레이북(예: 저장소 루트의 site.yml)을 내용으로 잡는다.
+-- 앞부분만 훑고 Ansible 특유의 표식이 있을 때만 승격시킨다. nil을 돌려주면
+-- 다음 규칙으로 넘어가므로 K8s 매니페스트, docker-compose, Helm 템플릿,
+-- GitHub Actions는 그대로 자기 타입으로 남는다.
+local function ansible_by_content(_, bufnr)
+  for _, line in ipairs(vim.api.nvim_buf_get_lines(bufnr, 0, 40, false)) do
+    if
+      line:match("^%s*hosts:")
+      or line:match("ansible%.[%w_]+%.")
+      or line:match("^%s*become:%s")
+      or line:match("^%s*gather_facts:%s")
+    then
+      return "yaml.ansible"
+    end
+  end
+end
+
 vim.filetype.add({
   extension = {
     alloy = "hcl", -- Grafana Alloy
@@ -95,13 +138,7 @@ vim.filetype.add({
     ["nginx.conf"] = "nginx",
     [".yamllint"] = "yaml",
   },
-  pattern = {
-    ["Jenkinsfile.*"] = "groovy",
-    [".*%.jenkinsfile"] = "groovy",
-    [".*/%.github/workflows/.*%.ya?ml"] = "yaml.ghaction",
-    [".*/playbooks/.*%.ya?ml"] = "yaml.ansible",
-    [".*/roles/.*/tasks/.*%.ya?ml"] = "yaml.ansible",
-    [".*/nginx/.*%.conf"] = "nginx",
-    [".*/templates/.*%.ya?ml"] = "helm",
-  },
+  pattern = vim.tbl_extend("error", patterns, {
+    [".*%.ya?ml"] = { ansible_by_content, { priority = CONTENT_RULE } },
+  }),
 })

@@ -16,6 +16,7 @@ ts.setup({
 -- 실사용 언어. nvim 0.12는 c/lua/markdown/vim/vimdoc/query 파서를 내장하고 있다.
 local parsers = {
   "bash",
+  "csv", -- 리포트/추출 데이터
   "diff",
   "dockerfile",
   "gitcommit",
@@ -23,18 +24,29 @@ local parsers = {
   "go",
   "gomod",
   "gosum",
+  "gotmpl", -- Go 템플릿
+  "gowork",
   "groovy", -- Jenkinsfile
   "hcl", -- Terraform / Grafana Alloy
+  "helm", -- Helm 차트 템플릿 ({{ }}를 YAML로 오파싱하지 않게)
+  "ini", -- dosini (awscli config, systemd unit 등)
   "json",
   "make",
   "nginx",
+  "properties", -- .env, *.properties
   "python",
   "regex",
   "sql",
   "terraform",
   "toml",
+  "tsv",
+  "xml",
   "yaml",
 }
+
+-- `.env`는 filetype이 `env`인데 같은 이름의 파서는 없다. 문법이 key=value로
+-- 같으므로 properties 파서를 붙인다. 이게 없으면 하이라이트가 아예 없다.
+vim.treesitter.language.register("properties", "env")
 
 -- 없는 파서만 설치 (매 시작마다 네트워크를 때리지 않게)
 local installed = ts.get_installed("parsers")

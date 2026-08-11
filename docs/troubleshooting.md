@@ -62,9 +62,25 @@ Mason과 파서 설치물까지 잃으므로 최후 수단이다.
 - 256KiB를 초과하는 파일은 저장 시 자동 포맷 대상이 아니다.
 - Markdown은 의도적으로 포맷하지 않는다.
 - `:ConformInfo`에서 포매터 실행 파일과 선택 결과를 확인한다.
-- Terraform의 `tflint`, Go의 `goimports`·`gofumpt`, Alloy의 `alloy`는 별도 설치가 필요하다.
+- Go의 `goimports`·`gofumpt`, Alloy의 `alloy`, Terraform 포맷의 `terraform`은 Mason이 배포하지
+  않으므로 별도 설치가 필요하다. `tflint`, `hadolint`, `sqlfluff`는 `:LspInstallAll`이 설치한다.
+- SQL 진단이 없으면 방언 문제일 수 있다. 저장소에 `.sqlfluff`가 없으면 `ansi`를 사용하며
+  `lua/local.lua`의 `vim.g.sql_dialect`로 변경한다.
 
 중복 진단이 보이면 LSP와 `nvim-lint`가 같은 검사를 동시에 제공하는지 확인하고 한쪽만 남긴다.
+
+## Ansible 파일이 일반 YAML로 처리됨
+
+`:set filetype?`이 `yaml.ansible`이 아니면 `ansiblels`가 연결되지 않는다.
+
+- 경로가 `playbooks/` 또는 `roles/<이름>/{tasks,handlers,vars,defaults,meta}/` 아래인지
+  확인한다.
+- 그 밖의 위치라면 파일 앞 40줄에 `hosts:`, `become:`, `gather_facts:`,
+  `ansible.<컬렉션>.` 중 하나가 있어야 승격된다. 변수 파일(`group_vars/`, `host_vars/`)은
+  표식이 없으므로 일반 YAML로 남으며 이는 의도된 동작이다.
+- `ansible` 실행 파일이 필요하다. `ansiblels`는 모듈을 해석할 때 로컬 Ansible 설치를 사용한다.
+- 진단이 중복으로 보이면 `nvim-lint`에 Ansible 린터를 추가하지 않았는지 확인한다.
+  `ansible-lint`는 `ansiblels`가 실행하며 yamllint 규칙을 이미 포함한다.
 
 ## 아이콘이 네모로 표시됨
 

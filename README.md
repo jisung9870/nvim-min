@@ -75,7 +75,7 @@ nvim-pack-lock.json   플러그인 리비전 잠금 — git으로 추적한다
 | mason.nvim | LSP/린터/포매터 바이너리 설치 |
 | blink.cmp | 자동완성 (릴리스 태그 = 미리 빌드된 Rust 바이너리) |
 | conform.nvim | 포맷 |
-| nvim-lint | LSP가 못 주는 진단만 (yamllint / actionlint / tflint) |
+| nvim-lint | LSP가 못 주는 진단만 (yamllint / actionlint / tflint / hadolint / sqlfluff) |
 | snacks.nvim | picker, explorer, indent, notifier, input, bigfile |
 | which-key.nvim | 키맵 발견성 |
 | gitsigns.nvim | hunk 단위 git |
@@ -96,12 +96,57 @@ nvim-pack-lock.json   플러그인 리비전 잠금 — git으로 추적한다
 
 서버 목록은 실측 작업 스택 기준이다 (YAML > Jenkinsfile > Python > Terraform > SQL > Go).
 
-`lua_ls` `yamlls` `jsonls` `terraformls` `pyright` `ruff` `gopls` `bashls` `marksman`
+`lua_ls` `yamlls` `ansiblels` `jsonls` `terraformls` `taplo` `pyright` `ruff` `gopls`
+`bashls` `marksman`
 
 Markdown은 `marksman`이 문서 심볼, 링크 이동, 참조, 자동완성을 제공한다.
 
 Jenkinsfile은 **treesitter 하이라이트만** 된다. Groovy LSP는 JDK가 필요한데
 설치되어 있지 않다. Jenkins 서버 린터 연동은 아직 옮기지 않았다 (아래 "안 옮긴 것" 참고).
+
+### Ansible
+
+`yamlls`가 YAML 구조를, `ansiblels`가 모듈 이름·파라미터·문서를 담당한다.
+`ansiblels`가 `ansible-lint`를 직접 호출하므로 `nvim-lint` 쪽에는 Ansible 린터를
+넣지 않았다 — `ansible-lint`는 yamllint 규칙을 이미 포함해서 넣으면 같은 진단이
+두 번 뜬다.
+
+`yaml.ansible`로 승격되는 조건은 둘 중 하나다.
+
+| 경로 | |
+|---|---|
+| `playbooks/**/*.yml` | |
+| `roles/*/{tasks,handlers,vars,defaults,meta}/*.yml` | |
+| **내용** | 앞 40줄에 `hosts:`, `become:`, `gather_facts:`, `ansible.*.` 중 하나 |
+
+내용 규칙은 경로 규칙에 진 다음에만 적용된다. 저장소 루트의 `site.yml`처럼 경로로는
+알 수 없는 플레이북을 잡기 위한 것이고, K8s 매니페스트·docker-compose·Helm 템플릿·
+GitHub Actions는 표식이 없어 그대로 자기 타입으로 남는다.
+
+Ansible 스키마는 schemastore가 아니라 **ansible-lint가 배포하는 것**을 쓴다.
+`json.schemastore.org/ansible-playbook.json`은 301 뒤 404라서, yamlls가 리다이렉트를
+따라가지 않아 플레이북을 열 때마다 `Unable to load schema ... No content` 진단이 떴다.
+
+### 데이터 형식
+
+| 형식 | 하이라이트 | LSP | 포맷 | 린트 |
+|---|---|---|---|---|
+| YAML | ✓ | yamlls | prettier | yamllint |
+| JSON / JSONC | ✓ | jsonls | prettier | (LSP) |
+| TOML | ✓ | taplo | taplo | (LSP) |
+| HCL / Terraform | ✓ | terraformls | terraform_fmt | tflint |
+| Dockerfile | ✓ | — | — | hadolint |
+| SQL | ✓ | — | 의도적 없음 | sqlfluff |
+| CSV / TSV | ✓ | — | — | — |
+| XML | ✓ | — | — | — |
+| INI · `.env` | ✓ | — | — | — |
+
+`.env`는 filetype이 `env`인데 같은 이름의 파서가 없다. key=value로 문법이 같은
+`properties` 파서를 붙였다.
+
+SQL 포맷을 비워 둔 건 의도다. `sqlfluff fix`는 쿼리를 크게 다시 쓰므로 저장할 때마다
+돌리기엔 위험하다. 방언 기본값은 `ansi`이고 `lua/local.lua`의 `vim.g.sql_dialect`로
+바꾼다. 저장소에 `.sqlfluff`가 있으면 그쪽이 이긴다.
 
 ## 키맵
 
@@ -218,6 +263,8 @@ NVIM_APPNAME=nvim-min nvim                 # lockfile 리비전 그대로 설치
 | `rg`, `fd` | picker/grep | picker가 느려짐 |
 | `macism` | 한영 자동 전환 (`brew install macism`) | 조용히 비활성화 |
 | `alloy` | Grafana Alloy 포맷 | 조용히 비활성화 |
+| `terraform` | `terraform_fmt` 포맷 | 포맷 안 됨 |
+| `ansible` | `ansiblels`가 모듈을 해석할 때 씀 | Ansible 진단 없음 |
 | `gitui` 또는 `lazygit` | `<leader>gg` | 명령 못 찾음 |
 | `bb` | `<leader>tp` tmux 세션 전환 | 명령 못 찾음 |
 

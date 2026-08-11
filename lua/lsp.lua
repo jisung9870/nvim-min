@@ -22,8 +22,10 @@ require("mason").setup({
 local servers = {
   "lua_ls",
   "yamlls",
+  "ansiblels",
   "jsonls",
   "terraformls",
+  "taplo", -- TOML
   "pyright",
   "ruff",
   "gopls",
@@ -35,8 +37,10 @@ local servers = {
 local mason_packages = {
   "lua-language-server",
   "yaml-language-server",
+  "ansible-language-server",
   "json-lsp",
   "terraform-ls",
+  "taplo",
   "pyright",
   "ruff",
   "gopls",
@@ -45,6 +49,10 @@ local mason_packages = {
   -- 린터/포매터
   "yamllint",
   "actionlint",
+  "ansible-lint", -- ansiblels가 내부에서 호출한다
+  "tflint",
+  "hadolint",
+  "sqlfluff",
   "shellcheck",
   "shfmt",
   "stylua",
@@ -83,6 +91,9 @@ vim.lsp.config("lua_ls", {
   },
 })
 
+-- ansible-lint가 배포하는 스키마. schemastore 쪽 ansible 항목은 없어졌다.
+local ansible_schema = "https://raw.githubusercontent.com/ansible/ansible-lint/main/src/ansiblelint/schemas/"
+
 vim.lsp.config("yamlls", {
   filetypes = { "yaml", "yaml.ansible", "yaml.ghaction", "helm" },
   settings = {
@@ -108,8 +119,37 @@ vim.lsp.config("yamlls", {
         ["https://json.schemastore.org/github-workflow.json"] = ".github/workflows/*.{yml,yaml}",
         ["https://json.schemastore.org/github-action.json"] = ".github/actions/**/action.{yml,yaml}",
         ["https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json"] = "*docker-compose*.{yml,yaml}",
-        ["https://json.schemastore.org/ansible-playbook.json"] = "playbooks/**/*.{yml,yaml}",
+
+        -- Ansible 스키마는 ansible-lint가 배포하는 것을 쓴다.
+        -- schemastore의 ansible-playbook.json은 301 뒤 404다. yamlls가
+        -- 리다이렉트를 따라가지 않아 플레이북을 열 때마다
+        -- "Unable to load schema ... No content" 진단이 떴다.
+        [ansible_schema .. "playbook.json"] = {
+          "playbooks/**/*.{yml,yaml}",
+          "site.{yml,yaml}",
+        },
+        [ansible_schema .. "tasks.json"] = {
+          "roles/*/tasks/*.{yml,yaml}",
+          "roles/*/handlers/*.{yml,yaml}",
+        },
       },
+    },
+  },
+})
+
+-- Ansible ---------------------------------------------------------------------
+-- yamlls는 YAML 구조를, ansiblels는 모듈 이름·파라미터·문서를 담당한다.
+-- ansiblels가 ansible-lint를 직접 호출하므로 nvim-lint 쪽에는 Ansible 린터를
+-- 넣지 않는다 (같은 진단이 두 번 뜬다).
+vim.lsp.config("ansiblels", {
+  settings = {
+    ansible = {
+      validation = {
+        enabled = true,
+        lint = { enabled = true, path = "ansible-lint" },
+      },
+      -- 컨테이너 실행 환경은 쓰지 않는다. 로컬 ansible 설치를 그대로 본다.
+      executionEnvironment = { enabled = false },
     },
   },
 })
