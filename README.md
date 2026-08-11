@@ -9,6 +9,10 @@ NVIM_APPNAME=nvim-min nvim
 기존 LazyVim(`~/.config/nvim`)은 그대로 남아 있고 서로 간섭하지 않는다.
 플러그인/파서/mason 설치물도 `~/.local/share/nvim-min/`에 따로 들어간다.
 
+설치부터 구조, 기능 구성, 전체 키맵, 운영·복구, 릴리스 절차까지는
+[상세 문서](docs/README.md)에서 확인할 수 있다. 사용자 영향 변경은
+[Changelog](CHANGELOG.md)에 기록한다.
+
 ## 왜 vim.pack인가
 
 lazy.nvim이 기능은 전부 앞선다 (lazy-loading, `:Lazy` UI, 의존성 자동 해결).
