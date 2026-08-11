@@ -122,6 +122,7 @@ Kubernetes 스키마는 다음 경로 패턴에만 연결된다.
 | Terraform 계열 | `tflint` |
 | Dockerfile | `hadolint` |
 | SQL | `sqlfluff` |
+| `Jenkinsfile*`, `*.jenkinsfile` | Jenkins 서버 `pipeline-model-converter/validate` |
 
 린트는 `BufWritePost`, `BufReadPost`, `InsertLeave`에서 실행된다. LSP와 같은 진단을 중복 제공하는
 린터는 추가하지 않는 것이 원칙이다.
@@ -132,6 +133,26 @@ Ansible YAML이 이 표에 없는 것은 이 원칙 때문이다. `ansiblels`가
 
 `sqlfluff`는 방언 없이 실행되지 않는다. 저장소의 `.sqlfluff` 설정이 우선하며, 없을 때 사용할
 기본값은 `ansi`다. `lua/local.lua`의 `vim.g.sql_dialect`로 변경한다.
+
+### Jenkinsfile 검증
+
+Groovy LSP는 JDK를 요구하므로 사용하지 않는다. 대신 Jenkins 서버의 선언형 파이프라인
+검증 엔드포인트에 파일을 올려 진단을 받는다. 자격증명은 환경변수를 먼저 확인하고 없으면
+`vim.g`를 확인한다.
+
+| 환경변수 | `lua/local.lua` 전역 |
+|---|---|
+| `JENKINS_URL` | `vim.g.jenkins_url` |
+| `JENKINS_USER` | `vim.g.jenkins_user` |
+| `JENKINS_TOKEN` | `vim.g.jenkins_token` |
+
+세 값 중 하나라도 비어 있으면 기능이 조용히 비활성화된다. 토큰은 curl의 `--variable`과
+`--expand-user`로 자식 프로세스 환경에서 읽으며 명령줄 인자로 전달하지 않는다. 사내망
+프록시 변수(`HTTP_PROXY` 등)는 설정되어 있을 때만 자식 환경으로 전달한다.
+
+네트워크 요청이므로 다른 린터와 달리 `BufWritePost`에서만 실행한다. 수동 실행은
+`:JenkinsLint`다. 서버 응답을 해석하지 못하면 조용히 넘어가지 않고 첫 줄에 경고 진단을
+하나 남겨 인증·URL·네트워크 문제를 드러낸다.
 
 ## Treesitter 파서
 
@@ -181,7 +202,6 @@ Helm 차트의 `templates/` 아래 YAML과 `.tpl` 파일은 `helm` 파서를 사
 
 ## 알려진 범위 밖 기능
 
-- Jenkins 서버 린터
 - 파일 내용 기반 Kubernetes 스키마 선택
 - workbench 프로젝트·worktree·agent 통합
 - octo, GitLab, kubectl, csvview, gitgraph

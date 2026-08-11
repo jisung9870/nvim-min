@@ -105,6 +105,21 @@ Mason과 파서 설치물까지 잃으므로 최후 수단이다.
 - 태그를 지정해도 그대로면 파일이 모듈 밖에 있거나 `go.mod`가 없는 경우다.
 - `:GoBuildTags`를 인자 없이 실행하면 해제되며, 두 경우 모두 gopls를 다시 시작한다.
 
+## Jenkinsfile 진단이 없거나 이상함
+
+- 진단이 **전혀 없다면** 자격증명이 비어 있어 기능이 비활성화된 상태다. `:JenkinsLint`를
+  직접 실행하면 어느 값이 없는지 알려준다.
+- `JENKINS_URL`, `JENKINS_USER`, `JENKINS_TOKEN` 또는 `lua/local.lua`의
+  `vim.g.jenkins_url`, `vim.g.jenkins_user`, `vim.g.jenkins_token`을 확인한다.
+  환경변수가 우선한다.
+- 1번 줄에 `jenkins validate 응답을 해석하지 못했다`가 뜨면 메시지 뒤에 붙은 curl 또는
+  서버 응답의 첫 줄이 원인이다. 401은 토큰, 404는 URL, `Couldn't connect`는 네트워크나
+  프록시 문제다.
+- 저장할 때만 실행된다. 편집 중에는 갱신되지 않는 것이 정상이다.
+- 디스크의 파일을 올리므로 저장하지 않은 변경은 반영되지 않는다.
+- 자유 형식 스크립트 파이프라인은 이 엔드포인트의 검증 대상이 아니다. 선언형
+  (`pipeline { ... }`) 문법만 검사된다.
+
 ## 아이콘이 네모로 표시됨
 
 터미널 폰트를 Nerd Font 패치본으로 설정한다. `lua/icons.lua`는 글리프 손상을 막기 위해 Unicode

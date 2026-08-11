@@ -19,7 +19,12 @@ nvim-min은 기능 수보다 이해 가능성과 재현성을 우선한다. 모�
 - 대규모 플러그인 배포판과 같은 기능 범위
 - 모든 플러그인의 지연 로딩
 - DAP·neotest·AI 도구의 기본 포함
-- Jenkins 서버 린터나 내용 기반 Kubernetes 스키마 자동 감지
+- 내용 기반 Kubernetes 스키마 자동 감지
+
+Jenkins 서버 린터는 이전까지 비목표였으나 구현으로 전환했다. 판단 근거는 이 문서의
+전환 기준이다. 새 플러그인이 없고(`nvim-lint` 재사용) 시작 시 등록하는 것은 autocmd
+하나뿐이라 `vim.pack.add()` 목록과 시작 시간에 영향이 없다. 반대로 Jenkinsfile은
+작업량 2위인데 Groovy LSP를 쓸 수 없어 진단 경로가 아예 없었다.
 
 ## 시작 흐름
 
@@ -50,7 +55,7 @@ NVIM_APPNAME=nvim-min nvim
 | `lua/treesitter.lua` | 파서 설치·하이라이트·폴드·들여쓰기 | 신규 언어 파서와 쿼리 존재 여부 |
 | `lua/lsp.lua` | Mason 패키지와 LSP 설정 | 서버 이름, 실행 파일, root 탐지 |
 | `lua/completion.lua` | blink.cmp | insert·cmdline 키 충돌 |
-| `lua/editing.lua` | 포맷·린트·pairs·surround·입력기 | 저장 지연과 진단 중복 |
+| `lua/editing.lua` | 포맷·린트(Jenkins 검증 포함)·pairs·surround·입력기 | 저장 지연, 진단 중복, 자격증명 없는 환경 |
 | `lua/markdown.lua` | Markdown 렌더링 | insert 모드 원문 편집 |
 | `lua/finder.lua` | picker·explorer·진단 목록 | 제외 경로와 대규모 저장소 성능 |
 | `lua/git.lua` | hunk·diff·Git UI | Git 저장소 밖의 동작 |

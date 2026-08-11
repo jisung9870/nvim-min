@@ -27,6 +27,10 @@ nvim-min의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git �
   확인용 `:PythonEnv` 명령을 함께 제공한다.
 - gopls 빌드 태그 설정. `vim.g.go_build_tags`(`lua/local.lua`) 또는
   `:GoBuildTags <태그>`로 지정하고, 인자 없이 실행하면 해제한다.
+- Jenkinsfile 검증. 저장 시 `Jenkinsfile*`과 `*.jenkinsfile`을 Jenkins의
+  `pipeline-model-converter/validate`로 보내 진단을 받는다. 수동 실행은 `:JenkinsLint`.
+  자격증명(`JENKINS_URL` / `JENKINS_USER` / `JENKINS_TOKEN` 또는 대응하는 `vim.g`)이
+  없으면 조용히 비활성화된다.
 
 ### Changed
 
@@ -38,6 +42,8 @@ nvim-min의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git �
   yamllint 규칙을 포함하므로 같은 진단이 두 번 떴을 것이다.
 - 파일 타입 패턴에 우선순위를 명시했다. Neovim은 우선순위 0 이하 패턴을 확장자
   조회 뒤에 평가하므로 기본값으로는 `yml` 확장자 규칙이 먼저 이긴다.
+- Jenkins 서버 린터를 비목표에서 제외했다. 새 플러그인 없이 `nvim-lint`를 재사용하고
+  시작 시 비용이 없어 전환 기준에 걸리지 않는다.
 
 ### Deprecated
 
@@ -56,6 +62,7 @@ nvim-min의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git �
 
 ### Security
 
-- 없음
+- Jenkins API 토큰을 curl `--variable` / `--expand-user`로 자식 프로세스 환경에서만
+  읽는다. 명령줄 인자에 담기지 않으므로 `ps`에 노출되지 않는다.
 
 [Unreleased]: https://github.com/jisung9870/nvim-min/commits/nvim-min
