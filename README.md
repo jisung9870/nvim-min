@@ -100,6 +100,33 @@ nvim-pack-lock.json   플러그인 리비전 잠금 — git으로 추적한다
 
 Markdown은 `marksman`이 문서 심볼, 링크 이동, 참조, 자동완성을 제공한다.
 
+### Python 가상환경
+
+pyright에 인터프리터를 알려주지 않으면 PATH의 python을 쓴다. 그러면 프로젝트
+가상환경에만 있는 패키지가 전부 `could not be resolved`가 되고, 그 패키지에 대한
+타입·자동완성·정의 이동이 통째로 죽는다. 그래서 붙을 때마다 인터프리터를 찾는다.
+
+1. `VIRTUAL_ENV` 또는 `CONDA_PREFIX` — 셸에서 이미 활성화했으면 그게 의도다
+2. 편집 중인 파일에서 위로 올라가며 만나는 첫 `.venv` 또는 `venv`
+
+루트가 아니라 **파일 기준으로 올라간다**. 서비스마다 venv가 따로인 저장소도 맞는다.
+둘 다 없으면 아무것도 넘기지 않고 pyright 기본 동작에 맡긴다. 지금 어떤 인터프리터를
+쓰는지는 `:PythonEnv`로 확인한다.
+
+### Go 빌드 태그
+
+`//go:build integration`이 붙은 파일은 기본 빌드에서 빠지므로 gopls가
+`No packages found for open file`로 그 파일을 통째로 포기한다. 태그 이름은
+저장소마다 다르니 설정에 박지 않는다.
+
+```lua
+-- lua/local.lua
+vim.g.go_build_tags = { "integration", "e2e" }
+```
+
+그 자리에서 바꾸려면 `:GoBuildTags integration,e2e`. 인자 없이 `:GoBuildTags`면
+해제된다. 둘 다 gopls를 다시 띄운다.
+
 Jenkinsfile은 **treesitter 하이라이트만** 된다. Groovy LSP는 JDK가 필요한데
 설치되어 있지 않다. Jenkins 서버 린터 연동은 아직 옮기지 않았다 (아래 "안 옮긴 것" 참고).
 
@@ -186,6 +213,8 @@ gitui나 Claude Code처럼 ESC를 직접 받아야 하는 TUI는 영향받지 �
 | `:PackClean` | `plugins.lua`에서 빠진 플러그인 삭제 |
 | `:TSUpdateAll` / `:TSSync` | 파서 업데이트 / 목록 전부 동기 설치 |
 | `:LspInstallAll` | 이 설정이 쓰는 LSP·린터·포매터 전부 설치 |
+| `:PythonEnv` | pyright가 쓰는 Python 인터프리터와 그 출처 확인 |
+| `:GoBuildTags [태그]` | gopls 빌드 태그 설정 후 재시작 (인자 없으면 해제) |
 | `:Mason` | mason UI |
 | `:FormatToggle[!]` | 자동 포맷 토글 (`!`는 현재 버퍼만) |
 

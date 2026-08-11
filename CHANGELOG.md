@@ -14,6 +14,12 @@ nvim-min의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git �
 - Markdown 내부 렌더링과 marksman 기반 Markdown 언어 지원
 - 설치, 구조, 구성, 키맵, 운영, 문제 해결, 릴리스 관리 문서
 
+- Pyright의 Python 가상환경 자동 감지. `VIRTUAL_ENV`/`CONDA_PREFIX`를 먼저 보고,
+  없으면 편집 중인 파일에서 상위로 올라가며 `.venv` 또는 `venv`를 찾는다.
+  확인용 `:PythonEnv` 명령을 함께 제공한다.
+- gopls 빌드 태그 설정. `vim.g.go_build_tags`(`lua/local.lua`) 또는
+  `:GoBuildTags <태그>`로 지정하고, 인자 없이 실행하면 해제한다.
+
 ### Changed
 
 - Markdown 내부 렌더링에서 HTML과 LaTeX 변환을 비활성화해 원문 편집을 우선한다.
