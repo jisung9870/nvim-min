@@ -22,6 +22,11 @@ nvim-min의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git �
 - `roles/*/{handlers,vars,defaults,meta}`와 Ansible 표식이 있는 그 외 YAML의
   `yaml.ansible` 감지.
 - Helm 차트 `templates/` 아래 `*.tpl` 감지.
+- Pyright의 Python 가상환경 자동 감지. `VIRTUAL_ENV`/`CONDA_PREFIX`를 먼저 보고,
+  없으면 편집 중인 파일에서 상위로 올라가며 `.venv` 또는 `venv`를 찾는다.
+  확인용 `:PythonEnv` 명령을 함께 제공한다.
+- gopls 빌드 태그 설정. `vim.g.go_build_tags`(`lua/local.lua`) 또는
+  `:GoBuildTags <태그>`로 지정하고, 인자 없이 실행하면 해제한다.
 
 ### Changed
 

@@ -79,6 +79,17 @@ end, { desc = "이 설정이 쓰는 LSP/린터/포매터 설치 (없는 것만)"
 
 -- 서버별 커스텀 설정 --------------------------------------------------------
 
+--- 클라이언트 하나에만 적용되는 설정 덮어쓰기.
+---
+--- 서버가 workspace/configuration으로 설정을 당겨갈 때 nvim은 `client.settings`를
+--- 읽는다. `before_init`에서 `config.settings`를 새 테이블로 바꿔도 client.settings는
+--- 원래 테이블을 계속 가리키므로 값이 서버에 도달하지 않는다.
+--- 클라이언트마다 복사본을 만들어 고쳐야 다른 프로젝트로 값이 새지도 않는다.
+local function override_settings(client, patch)
+  client.settings = vim.tbl_deep_extend("force", vim.deepcopy(client.settings or {}), patch)
+  client:notify("workspace/didChangeConfiguration", { settings = client.settings })
+end
+
 vim.lsp.config("lua_ls", {
   settings = {
     Lua = {
@@ -154,6 +165,46 @@ vim.lsp.config("ansiblels", {
   },
 })
 
+-- Python 인터프리터 탐지 ----------------------------------------------------
+-- pyright는 pythonPath를 안 주면 PATH의 python을 쓴다. 그러면 프로젝트
+-- 가상환경에만 있는 패키지가 전부 "could not be resolved"가 되고, 그 패키지에
+-- 대한 타입·완성·정의 이동이 통째로 죽는다.
+--
+-- 우선순위:
+--   1. VIRTUAL_ENV / CONDA_PREFIX — 셸에서 이미 활성화했으면 그게 의도다
+--   2. 파일에서 위로 올라가며 만나는 첫 .venv 또는 venv
+--      (루트가 아니라 파일 기준이라 서비스마다 venv가 따로인 저장소도 맞는다)
+-- 둘 다 없으면 pythonPath를 넘기지 않고 pyright 기본 동작에 맡긴다.
+
+local function nearest_venv(start)
+  local found = vim.fs.find(function(name, dir)
+    if name ~= ".venv" and name ~= "venv" then
+      return false
+    end
+    return vim.uv.fs_stat(dir .. "/" .. name .. "/bin/python") ~= nil
+  end, { path = start, upward = true, type = "directory", limit = 1 })
+  return found[1]
+end
+
+local function python_interpreter(start)
+  for _, prefix in ipairs({ vim.env.VIRTUAL_ENV, vim.env.CONDA_PREFIX }) do
+    if prefix and prefix ~= "" and vim.uv.fs_stat(prefix .. "/bin/python") then
+      return prefix .. "/bin/python", "환경변수"
+    end
+  end
+  if start == nil or start == "" then
+    start = vim.api.nvim_buf_get_name(0)
+  end
+  if start == "" then
+    start = vim.fn.getcwd()
+  end
+  local venv = nearest_venv(start)
+  if venv then
+    return venv .. "/bin/python", venv
+  end
+  return nil, nil
+end
+
 vim.lsp.config("pyright", {
   settings = {
     python = {
@@ -169,7 +220,42 @@ vim.lsp.config("pyright", {
       },
     },
   },
+  on_init = function(client)
+    local interpreter = python_interpreter(client.root_dir)
+    if interpreter then
+      override_settings(client, { python = { pythonPath = interpreter } })
+    end
+  end,
 })
+
+vim.api.nvim_create_user_command("PythonEnv", function()
+  local interpreter, source = python_interpreter(nil)
+  if not interpreter then
+    vim.notify("가상환경을 찾지 못했다. pyright가 PATH의 python을 쓴다.", vim.log.levels.WARN)
+    return
+  end
+  vim.notify(("pyright 인터프리터: %s\n출처: %s"):format(interpreter, source), vim.log.levels.INFO)
+end, { desc = "pyright가 쓰는 Python 인터프리터 확인" })
+
+-- Go 빌드 태그 --------------------------------------------------------------
+-- `//go:build integration` 같은 태그가 붙은 파일은 기본 빌드에 들어가지 않아
+-- gopls가 "No packages found for open file"로 통째로 포기한다. 태그는 저장소마다
+-- 다르므로 값은 설정에 박지 않는다.
+--
+--   lua/local.lua 에서:  vim.g.go_build_tags = { "integration", "e2e" }
+--   또는 그 자리에서:     :GoBuildTags integration,e2e
+--
+-- vim.g는 lsp.lua보다 늦게 로드되는 local.lua에서도 잡히도록 attach 시점에 읽는다.
+local function go_build_flags()
+  local tags = vim.g.go_build_tags
+  if type(tags) == "table" then
+    tags = table.concat(tags, ",")
+  end
+  if type(tags) ~= "string" or tags == "" then
+    return nil
+  end
+  return { "-tags=" .. tags }
+end
 
 vim.lsp.config("gopls", {
   settings = {
@@ -184,6 +270,33 @@ vim.lsp.config("gopls", {
       },
     },
   },
+  on_init = function(client)
+    local flags = go_build_flags()
+    if flags then
+      override_settings(client, { gopls = { buildFlags = flags } })
+    end
+  end,
+})
+
+vim.api.nvim_create_user_command("GoBuildTags", function(args)
+  vim.g.go_build_tags = vim.trim(args.args)
+  -- 이 빌드에는 :LspRestart가 없다. 클라이언트를 멈추고 버퍼를 다시 읽어
+  -- vim.lsp.enable의 자동 시작을 태우는 게 확실한 경로다.
+  local clients = vim.lsp.get_clients({ name = "gopls" })
+  for _, client in ipairs(clients) do
+    client:stop()
+  end
+  vim.defer_fn(function()
+    vim.cmd("silent! edit")
+    if args.args == "" then
+      vim.notify("Go 빌드 태그 해제", vim.log.levels.INFO)
+    else
+      vim.notify("Go 빌드 태그: " .. args.args, vim.log.levels.INFO)
+    end
+  end, 300)
+end, {
+  nargs = "?",
+  desc = "gopls 빌드 태그 설정 후 재시작 (인자 없으면 해제)",
 })
 
 vim.lsp.config("bashls", {

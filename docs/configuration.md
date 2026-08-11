@@ -40,9 +40,9 @@ Markdown 내부 렌더링은 제목, 목록, 체크박스, 표와 코드 블록�
 | `jsonls` | JSON | lspconfig 기본 설정 |
 | `terraformls` | Terraform | Terraform 파일 타입 |
 | `taplo` | TOML | 스키마 검증과 포맷 |
-| `pyright` | Python 타입 | unused 진단은 Ruff와 중복되지 않게 비활성화 |
+| `pyright` | Python 타입 | unused 진단은 Ruff와 중복되지 않게 비활성화; 가상환경 자동 감지 |
 | `ruff` | Python 진단·수정 | Pyright와 역할 분리 |
-| `gopls` | Go | gofumpt, staticcheck, hint 활성화 |
+| `gopls` | Go | gofumpt, staticcheck, hint 활성화; 빌드 태그 설정 가능 |
 | `bashls` | shell, bash | shellcheck 연동은 서버 측 동작 사용 |
 | `marksman` | Markdown | 문서 심볼, 링크, 참조, 완성 |
 
@@ -51,6 +51,36 @@ Markdown 내부 렌더링은 제목, 목록, 체크박스, 표와 코드 블록�
 
 `terraform`, `ansible`, `goimports`, `gofumpt`, `alloy`는 Mason이 배포하지 않으므로 사용하는
 언어에 맞게 시스템에 설치해야 한다.
+
+### Python 가상환경
+
+Pyright는 인터프리터 경로를 받지 못하면 `PATH`의 Python을 사용한다. 프로젝트 가상환경에만
+설치된 패키지는 이 경우 전부 미해결 import가 되며 해당 패키지의 타입 추론, 자동완성, 정의
+이동이 함께 동작하지 않는다. 클라이언트가 붙을 때마다 다음 순서로 인터프리터를 찾는다.
+
+1. `VIRTUAL_ENV` 또는 `CONDA_PREFIX` 환경 변수
+2. 편집 중인 파일에서 상위로 올라가며 처음 만나는 `.venv` 또는 `venv`
+
+탐색 기준은 프로젝트 루트가 아니라 편집 중인 파일이다. 하나의 저장소 안에서 디렉터리마다
+가상환경이 다른 구성도 각 파일에 맞는 인터프리터를 사용한다. 둘 다 없으면 경로를 넘기지
+않고 Pyright 기본 동작을 유지한다.
+
+설정은 클라이언트별 복사본에 적용하므로 한 프로젝트의 인터프리터가 다른 프로젝트로
+전파되지 않는다. 현재 사용 중인 인터프리터와 그 출처는 `:PythonEnv`로 확인한다.
+
+### Go 빌드 태그
+
+`//go:build` 제약이 붙은 파일은 기본 빌드 대상이 아니므로 gopls가 해당 파일을 패키지에서
+제외하고 `No packages found for open file`을 보고한다. 태그 이름은 저장소마다 다르므로
+설정 파일에 고정하지 않는다.
+
+```lua
+-- lua/local.lua
+vim.g.go_build_tags = { "integration", "e2e" }
+```
+
+문자열(`"integration,e2e"`)도 허용한다. 세션 중에는 `:GoBuildTags integration,e2e`로 지정하고
+인자 없이 실행하면 해제한다. 두 방법 모두 gopls를 다시 시작한다.
 
 ### YAML 스키마
 
