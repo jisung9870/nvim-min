@@ -9,47 +9,50 @@
 -- laststatus=3(전역)이라 창마다 그리지 않는다.
 -- ============================================================================
 
-local c = require("theme").colors
+local theme = require("theme")
 local icons = require("icons")
 
 -- 하이라이트 정의 -----------------------------------------------------------
--- 모드 블록은 배경색으로 채우고, 나머지는 mantle 바탕에 글자색만 바꾼다.
+-- 모드 블록은 배경색으로 채우고, 나머지는 바 바탕에 글자색만 바꾼다.
+-- 색은 theme의 시맨틱 토큰에서만 온다. catppuccin 고유 이름은 여기 없다.
 local function hl(name, spec)
   vim.api.nvim_set_hl(0, name, spec)
 end
 
 local function define_highlights()
-  local bg = c.mantle
+  -- background가 바뀐 직후에도 맞는 색을 쓰도록 매번 토큰을 새로 받는다.
+  local t = theme.rebuild()
+  local bg = t.bar
 
-  hl("StBase", { fg = c.text, bg = bg })
-  hl("StDim", { fg = c.overlay1, bg = bg })
-  hl("StPath", { fg = c.text, bg = bg })
-  hl("StModified", { fg = c.peach, bg = bg })
+  hl("StBase", { fg = t.fg, bg = bg })
+  hl("StDim", { fg = t.fg_dim, bg = bg })
+  hl("StPath", { fg = t.fg, bg = bg })
+  hl("StModified", { fg = t.modified, bg = bg })
 
-  hl("StGitBranch", { fg = c.mauve, bg = bg, bold = true })
-  hl("StGitAdd", { fg = c.green, bg = bg })
-  hl("StGitChange", { fg = c.yellow, bg = bg })
-  hl("StGitDelete", { fg = c.red, bg = bg })
+  hl("StGitBranch", { fg = t.git_branch, bg = bg, bold = true })
+  hl("StGitAdd", { fg = t.git_added, bg = bg })
+  hl("StGitChange", { fg = t.git_changed, bg = bg })
+  hl("StGitDelete", { fg = t.git_removed, bg = bg })
 
-  hl("StDiagError", { fg = c.red, bg = bg })
-  hl("StDiagWarn", { fg = c.peach, bg = bg })
-  hl("StDiagInfo", { fg = c.sky, bg = bg })
-  hl("StDiagHint", { fg = c.teal, bg = bg })
+  hl("StDiagError", { fg = t.err, bg = bg })
+  hl("StDiagWarn", { fg = t.warn, bg = bg })
+  hl("StDiagInfo", { fg = t.info, bg = bg })
+  hl("StDiagHint", { fg = t.hint, bg = bg })
 
-  hl("StFiletype", { fg = c.blue, bg = bg, bold = true })
-  hl("StProgress", { fg = c.subtext0, bg = c.surface0 })
-  hl("StLocation", { fg = c.base, bg = c.blue, bold = true })
+  hl("StFiletype", { fg = t.accent, bg = bg, bold = true })
+  hl("StProgress", { fg = t.fg_muted, bg = t.raised })
+  hl("StLocation", { fg = t.fg_on_accent, bg = t.accent, bold = true })
 
   -- 모드별 블록
-  hl("StModeNormal", { fg = c.base, bg = c.blue, bold = true })
-  hl("StModeInsert", { fg = c.base, bg = c.green, bold = true })
-  hl("StModeVisual", { fg = c.base, bg = c.mauve, bold = true })
-  hl("StModeReplace", { fg = c.base, bg = c.red, bold = true })
-  hl("StModeCommand", { fg = c.base, bg = c.peach, bold = true })
-  hl("StModeTerminal", { fg = c.base, bg = c.teal, bold = true })
+  hl("StModeNormal", { fg = t.fg_on_accent, bg = t.mode_normal, bold = true })
+  hl("StModeInsert", { fg = t.fg_on_accent, bg = t.mode_insert, bold = true })
+  hl("StModeVisual", { fg = t.fg_on_accent, bg = t.mode_visual, bold = true })
+  hl("StModeReplace", { fg = t.fg_on_accent, bg = t.mode_replace, bold = true })
+  hl("StModeCommand", { fg = t.fg_on_accent, bg = t.mode_command, bold = true })
+  hl("StModeTerminal", { fg = t.fg_on_accent, bg = t.mode_terminal, bold = true })
 
   -- 상태줄 전체 바탕
-  hl("StatusLine", { fg = c.text, bg = bg })
+  hl("StatusLine", { fg = t.fg, bg = bg })
 end
 
 -- 모드 ----------------------------------------------------------------------
@@ -171,10 +174,10 @@ local function filetype()
   if ft == "" then
     return ""
   end
-  local ok, icons = pcall(require, "mini.icons")
+  local ok, mini_icons = pcall(require, "mini.icons")
   local icon = ""
   if ok then
-    icon = icons.get("filetype", ft) .. " "
+    icon = mini_icons.get("filetype", ft) .. " "
   end
   return ("%%#StFiletype# %s%s "):format(icon, ft)
 end

@@ -103,6 +103,7 @@ Neovim 0.11 기본 `grn`, `gra`, `grr`, `gri`, `grt` 매핑은 `gr` prefix 지�
 | `<leader>ul` | 줄 번호와 상대 줄 번호 토글 |
 | `<leader>ud` | 진단 표시 토글 |
 | `<leader>um` | Markdown 내부 렌더링 토글 |
+| `<leader>ub` | light/dark 배경 토글; 테마와 상태줄이 함께 전환된다 |
 | `<leader>cp` / `cu` | 플러그인 상태 / 업데이트 |
 | `<leader>mt` | macOS에서 현재 Markdown을 Typora로 열기 |
 

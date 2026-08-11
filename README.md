@@ -45,7 +45,7 @@ lua/
   options.lua         vim 옵션. 플러그인이 읽기 전에 확정해야 함
   plugins.lua         vim.pack.add() — 이후부터 require 가능
   icons.lua           Nerd Font 글리프 (\u{} 이스케이프로 고정)
-  theme.lua           catppuccin + 하이라이트. 팔레트를 M.colors로 노출
+  theme.lua           catppuccin + 하이라이트. 색은 시맨틱 토큰(M.tokens)으로만 나감
   statusline.lua      직접 작성. theme의 팔레트를 씀
   treesitter.lua      파서 설치 + FileType에서 하이라이트/폴드/들여쓰기
   lsp.lua             vim.lsp.config / vim.lsp.enable + mason
@@ -64,11 +64,25 @@ nvim-pack-lock.json   플러그인 리비전 잠금 — git으로 추적한다
 `theme.lua`와 `statusline.lua`만 서로 의존하고, 나머지 모듈은 독립적이다.
 하나를 지워도 다른 게 깨지지 않는다.
 
+의존하는 대상은 **팔레트가 아니라 토큰**이다. `statusline.lua`에는 catppuccin
+고유 색 이름(`mauve`, `peach`, `surface0` …)이 한 번도 나오지 않는다.
+`theme.lua`의 `M.rebuild()` 매핑 한 곳만 팔레트를 알기 때문에, 테마를 갈아끼우는
+비용은 그 매핑 하나다.
+
+| | |
+|---|---|
+| `M.tokens` | 의미 이름 → 색. 항상 같은 테이블이라 캐싱해도 된다 |
+| `M.rebuild()` | 현재 `background`에 맞춰 토큰을 다시 채우고 `M.tokens`를 반환 |
+
+토큰은 `bg` `bar` `raised` `border` / `fg` `fg_muted` `fg_dim` `fg_on_accent` /
+`accent` `accent_alt` / `ok` `info` `warn` `err` `hint` `modified` /
+`git_*` / `mode_*` 로 나뉜다.
+
 ## 플러그인 18개
 
 | 플러그인 | 역할 |
 |---|---|
-| catppuccin/nvim | 테마 (mocha) |
+| catppuccin/nvim | 테마. `background`에 따라 mocha(dark) / latte(light) |
 | nvim-treesitter (`main`) | 파서 설치. 하이라이트는 nvim 내장이 처리 |
 | render-markdown.nvim | 제목·목록·체크박스·표·코드 블록을 Neovim 안에서 렌더링 |
 | nvim-lspconfig | 서버 기본값(`lsp/*.lua`) 제공. 옛 `setup{}` API는 안 씀 |
@@ -175,7 +189,7 @@ gitui나 Claude Code처럼 ESC를 직접 받아야 하는 TUI는 영향받지 �
 
 ### 토글 (`<leader>u`)
 
-`uf` 자동포맷(전역) · `uF` 자동포맷(버퍼) · `uw` wrap · `ul` 줄번호 · `ud` 진단 · `uh` inlay hint · `um` Markdown 렌더링
+`uf` 자동포맷(전역) · `uF` 자동포맷(버퍼) · `uw` wrap · `ul` 줄번호 · `ud` 진단 · `uh` inlay hint · `um` Markdown 렌더링 · `ub` light/dark 배경
 
 ## 유지보수
 
@@ -228,12 +242,18 @@ LazyVim 쪽에 있고 여기 없는 것들. 필요해지면 그때 옮긴다.
 - **Jenkins 서버 린터** (`lua/jenkins.lua`) — Jenkinsfile이 2위 작업량인데 지금은 하이라이트만 됨
 - **schema-companion** — K8s YAML 스키마를 파일 내용(`kind`/`apiVersion`)으로 자동 감지.
   지금은 `lsp.lua`에서 경로 규칙(`k8s/**`, `manifests/**`)으로만 붙인다
-- **workbench 모듈** (projects / worktrees / agents / binbox, 451줄) — `<leader>fp`는
-  snacks 기본 project picker로 대체해둠
 - **snacks explorer 커스텀 액션** — 파일 복제(`C`), 크기·수정시각 표시(`T`)
 - **octo / gitlab / kubectl / csvview / gitgraph**
 - **DAP, neotest** — 이걸 넣게 되면 lazy.nvim 전환 기준에 걸린다
 - **AI 플러그인** (claudecode, copilot)
+
+**안 옮기는 것으로 결정된 것** — 위 목록과 달리 대기 상태가 아니다.
+
+- **workbench 모듈** (projects / worktrees / agents / binbox, 451줄).
+  binbox-cli `docs/decision-log.md`의 "LazyVim Workbench UI retired"에서
+  **대체 없이 폐기**로 결정됐다. 에디터는 프로젝트 picker만 갖고, 수명주기
+  (agents / worktrees / schedulers)는 Orca가 단독으로 갖는다.
+  `<leader>fp`(snacks project picker)가 남은 전부다.
 
 ## 다음 성능 레버
 
