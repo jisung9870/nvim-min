@@ -1,0 +1,8 @@
+# 머신별 오버라이드
+lua/local.lua
+
+# OMC 런타임 산출물
+.omc/
+
+# nvim이 만드는 것
+*.log
