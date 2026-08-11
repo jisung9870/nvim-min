@@ -11,6 +11,8 @@ render.setup({
   completions = {
     lsp = { enabled = true },
   },
+  html = { enabled = false },
+  latex = { enabled = false },
 })
 
 vim.keymap.set("n", "<leader>um", render.toggle, { desc = "Toggle Markdown rendering" })

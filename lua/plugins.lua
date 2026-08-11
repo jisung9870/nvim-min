@@ -53,7 +53,8 @@ vim.api.nvim_create_user_command("PackStatus", function()
 end, { desc = "설치된 플러그인 목록 (네트워크 없이)" })
 
 vim.api.nvim_create_user_command("PackClean", function()
-  local stale = vim.iter(vim.pack.get())
+  local stale = vim
+    .iter(vim.pack.get())
     :filter(function(p)
       return not p.active
     end)

@@ -98,9 +98,7 @@ vim.lsp.config("yamlls", {
       schemas = {
         -- Kubernetes: kind/apiVersion 자동 감지 대신 경로 규칙으로 붙인다.
         -- (schema-companion 없이 가는 대신 명시적으로)
-        ["https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/"
-          .. (vim.g.k8s_schema_version or "v1.33.1")
-          .. "-standalone-strict/all.json"] = {
+        ["https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/" .. (vim.g.k8s_schema_version or "v1.33.1") .. "-standalone-strict/all.json"] = {
           "k8s/**/*.yaml",
           "manifests/**/*.yaml",
           "*.k8s.yaml",
