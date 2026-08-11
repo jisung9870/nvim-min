@@ -100,8 +100,31 @@ nvim-pack-lock.json   플러그인 리비전 잠금 — git으로 추적한다
 
 Markdown은 `marksman`이 문서 심볼, 링크 이동, 참조, 자동완성을 제공한다.
 
-Jenkinsfile은 **treesitter 하이라이트만** 된다. Groovy LSP는 JDK가 필요한데
-설치되어 있지 않다. Jenkins 서버 린터 연동은 아직 옮기지 않았다 (아래 "안 옮긴 것" 참고).
+Jenkinsfile에는 Groovy LSP를 붙이지 않는다 (JDK가 필요하다). 대신 **Jenkins 서버가
+직접 검증**한다 — 아래 참고.
+
+### Jenkinsfile 검증
+
+저장하면 `Jenkinsfile`, `Jenkinsfile.*`, `*.jenkinsfile`을 Jenkins의
+`pipeline-model-converter/validate`로 올려 문법 오류를 진단으로 받는다.
+수동 실행은 `:JenkinsLint`.
+
+자격증명은 환경변수를 먼저 보고, 없으면 `vim.g`를 본다.
+
+| 환경변수 | `lua/local.lua` | 값 |
+|---|---|---|
+| `JENKINS_URL` | `vim.g.jenkins_url` | `https://jenkins.example.com` |
+| `JENKINS_USER` | `vim.g.jenkins_user` | 계정 이름 |
+| `JENKINS_TOKEN` | `vim.g.jenkins_token` | Jenkins API 토큰 |
+
+셋 중 하나라도 비면 **조용히 비활성화**된다 (`macism`, `alloy`와 같은 규칙).
+셸에서 주입하려면 `bb sec exec jenkins -- nvim`.
+
+토큰은 curl의 `--variable` / `--expand-user`로 환경에서 읽는다. 명령줄 인자로
+넘기지 않으므로 같은 머신의 `ps`에 노출되지 않는다.
+
+네트워크를 타므로 **저장할 때만** 돈다. `InsertLeave`에서는 돌지 않는다.
+서버에 닿지 못하면 조용히 넘어가지 않고 1번 줄에 경고 진단 하나를 남긴다.
 
 ## 키맵
 
@@ -188,6 +211,7 @@ gitui나 Claude Code처럼 ESC를 직접 받아야 하는 TUI는 영향받지 �
 | `:LspInstallAll` | 이 설정이 쓰는 LSP·린터·포매터 전부 설치 |
 | `:Mason` | mason UI |
 | `:FormatToggle[!]` | 자동 포맷 토글 (`!`는 현재 버퍼만) |
+| `:JenkinsLint` | 현재 파일을 Jenkins 서버로 검증 |
 
 **업데이트가 뭔가 깨뜨렸을 때**
 
@@ -220,12 +244,12 @@ NVIM_APPNAME=nvim-min nvim                 # lockfile 리비전 그대로 설치
 | `alloy` | Grafana Alloy 포맷 | 조용히 비활성화 |
 | `gitui` 또는 `lazygit` | `<leader>gg` | 명령 못 찾음 |
 | `bb` | `<leader>tp` tmux 세션 전환 | 명령 못 찾음 |
+| `curl` | Jenkinsfile 검증 (macOS 기본 포함, 8.3+) | 조용히 비활성화 |
 
 ## 아직 안 옮긴 것
 
 LazyVim 쪽에 있고 여기 없는 것들. 필요해지면 그때 옮긴다.
 
-- **Jenkins 서버 린터** (`lua/jenkins.lua`) — Jenkinsfile이 2위 작업량인데 지금은 하이라이트만 됨
 - **schema-companion** — K8s YAML 스키마를 파일 내용(`kind`/`apiVersion`)으로 자동 감지.
   지금은 `lsp.lua`에서 경로 규칙(`k8s/**`, `manifests/**`)으로만 붙인다
 - **workbench 모듈** (projects / worktrees / agents / binbox, 451줄) — `<leader>fp`는
