@@ -89,6 +89,12 @@ map("n", "<leader>ud", function()
   vim.diagnostic.enable(not enabled)
   vim.notify("진단: " .. tostring(not enabled))
 end, { desc = "Toggle diagnostics" })
+-- background를 바꾸면 nvim이 컬러스킴을 다시 읽고(:h 'background'),
+-- theme이 latte/mocha 중 맞는 팔레트로 토큰을 다시 채운다.
+map("n", "<leader>ub", function()
+  vim.o.background = vim.o.background == "dark" and "light" or "dark"
+  vim.notify("배경: " .. vim.o.background)
+end, { desc = "Toggle light/dark background" })
 
 -- 설정 관리
 map("n", "<leader>cp", "<cmd>PackStatus<cr>", { desc = "Plugin status" })

@@ -9,7 +9,7 @@ Python, Terraform, SQL, Go 사용을 우선하며 Markdown 편집과 탐색·Git
 
 | 영역 | 플러그인 | 역할 |
 |---|---|---|
-| UI | `catppuccin/nvim` | Mocha 테마와 하이라이트 |
+| UI | `catppuccin/nvim` | `background`에 따른 Mocha/Latte 테마와 하이라이트 |
 | 구문 | `nvim-treesitter` (`main`) | 파서 설치; 실행은 Neovim 내장 API 사용 |
 | Markdown | `render-markdown.nvim` | 제목·목록·표·코드 블록 내부 렌더링 |
 | LSP | `nvim-lspconfig`, `mason.nvim` | 서버 기본값과 실행 파일 설치 |

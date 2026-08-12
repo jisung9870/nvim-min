@@ -39,7 +39,16 @@ NVIM_APPNAME=nvim-min nvim
   -> local.lua: 선택적 머신 오버라이드
 ```
 
-`theme.lua`가 색상 팔레트를 노출하고 `statusline.lua`가 이를 사용하는 의존성은 의도적이다.
+`theme.lua`가 색을 노출하고 `statusline.lua`가 이를 사용하는 의존성은 의도적이다.
+다만 노출 대상은 팔레트가 아니라 **시맨틱 토큰**(`M.tokens`)이다. `statusline.lua`는
+`mauve`, `peach`, `surface0` 같은 Catppuccin 고유 이름을 알지 못하고 `accent`,
+`warn`, `bar` 같은 의미 이름만 사용한다. 팔레트를 아는 곳은 `theme.lua`의
+`M.rebuild()` 매핑 한 곳뿐이므로 테마 교체 비용이 그 매핑으로 한정된다.
+
+플레이버는 `vim.o.background`에서 파생된다. `background`가 바뀌면 Neovim이 컬러스킴을
+다시 읽고(`:h 'background'`), `ColorScheme`에서 `M.rebuild()`가 실행되어 상태줄
+하이라이트가 같은 플레이버(latte 또는 mocha)로 따라간다.
+
 그 외 기능 모듈은 서로의 내부 구현을 직접 참조하지 않는 것을 원칙으로 한다.
 
 ## 파일별 책임
@@ -50,7 +59,7 @@ NVIM_APPNAME=nvim-min nvim
 | `lua/options.lua` | 전역 편집·UI 옵션 | 기존 파일의 들여쓰기·표시 변화 |
 | `lua/plugins.lua` | 플러그인 선언과 관리 명령 | 잠금 파일, 시작 시간, 플러그인 수 |
 | `lua/icons.lua` | Nerd Font·상태 아이콘 | 폰트가 없는 환경의 표시 |
-| `lua/theme.lua` | Catppuccin과 진단 UI | 상태줄 색상과 float 가독성 |
+| `lua/theme.lua` | Catppuccin, 시맨틱 토큰, 진단 UI | light/dark 양쪽의 상태줄 색상과 float 가독성 |
 | `lua/statusline.lua` | 모드·Git·진단·LSP 상태 | 좁은 창과 비Git 버퍼 |
 | `lua/treesitter.lua` | 파서 설치·하이라이트·폴드·들여쓰기 | 신규 언어 파서와 쿼리 존재 여부 |
 | `lua/lsp.lua` | Mason 패키지와 LSP 설정 | 서버 이름, 실행 파일, root 탐지 |

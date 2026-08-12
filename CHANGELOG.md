@@ -31,6 +31,9 @@ nvim-min의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git �
   `pipeline-model-converter/validate`로 보내 진단을 받는다. 수동 실행은 `:JenkinsLint`.
   자격증명(`JENKINS_URL` / `JENKINS_USER` / `JENKINS_TOKEN` 또는 대응하는 `vim.g`)이
   없으면 조용히 비활성화된다.
+- `<leader>ub` light/dark 배경 토글
+- `theme.lua`의 시맨틱 토큰 레이어(`M.tokens`, `M.rebuild()`). 색을 쓰는 모듈은
+  Catppuccin 고유 색 이름 대신 의미 이름만 사용한다.
 
 ### Changed
 
@@ -44,6 +47,8 @@ nvim-min의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git �
   조회 뒤에 평가하므로 기본값으로는 `yml` 확장자 규칙이 먼저 이긴다.
 - Jenkins 서버 린터를 비목표에서 제외했다. 새 플러그인 없이 `nvim-lint`를 재사용하고
   시작 시 비용이 없어 전환 기준에 걸리지 않는다.
+- `statusline.lua`가 Catppuccin 팔레트 대신 테마 토큰을 사용한다. 테마 교체 시
+  변경 지점이 `theme.lua`의 매핑 한 곳으로 한정된다.
 
 ### Deprecated
 
@@ -51,7 +56,7 @@ nvim-min의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git �
 
 ### Removed
 
-- 없음
+- `theme.lua`의 `M.colors`. `M.tokens`로 대체됐다.
 
 ### Fixed
 
@@ -59,6 +64,11 @@ nvim-min의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git �
   'https://json.schemastore.org/ansible-playbook.json': No content.` 진단.
   해당 URL은 301 뒤 404이고 yamlls가 리다이렉트를 따라가지 않는다.
 - Helm 차트의 `_helpers.tpl`이 `smarty`로 잡히던 문제.
+- `background=light`에서 테마가 Latte로 바뀌지 않던 문제. `flavour = "mocha"`가
+  `background` 매핑을 무력화하고 있었다.
+- 위 상황에서 상태줄만 Mocha 색으로 남던 문제. 팔레트를 `get_palette("mocha")`로
+  고정해 읽고 있었다.
+- `Comment`와 `CursorLine`이 Mocha 전용 하드코딩 색이라 Latte에서 대비가 무너지던 문제.
 
 ### Security
 
