@@ -22,8 +22,6 @@ brew install neovim
 nvim --version | head -n 1
 ```
 
-`xcode-select --install`에서 이미 설치되었다는 메시지가 나오면 그대로 다음 명령을 진행한다.
-
 ### WSL (Ubuntu)
 
 Ubuntu 기본 저장소의 Neovim이 0.12보다 낮을 수 있으므로 공식 최신 Linux tarball을 설치한다.
