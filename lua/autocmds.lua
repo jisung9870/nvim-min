@@ -129,7 +129,7 @@ end
 
 vim.filetype.add({
   extension = {
-    alloy = "hcl", -- Grafana Alloy
+    alloy = "alloy", -- Grafana Alloy (HCL과 비슷하지만 별도 River 문법)
     tf = "terraform",
     tfvars = "terraform-vars",
   },

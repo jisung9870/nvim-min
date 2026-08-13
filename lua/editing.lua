@@ -21,7 +21,7 @@ require("conform").setup({
     terraform = { "terraform_fmt" },
     tf = { "terraform_fmt" },
     ["terraform-vars"] = { "terraform_fmt" },
-    hcl = { "alloy_space" },
+    alloy = { "alloy_space" },
     sh = { "shfmt" },
     bash = { "shfmt" },
     lua = { "stylua" },

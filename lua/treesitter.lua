@@ -27,7 +27,7 @@ local parsers = {
   "gotmpl", -- Go 템플릿
   "gowork",
   "groovy", -- Jenkinsfile
-  "hcl", -- Terraform / Grafana Alloy
+  "hcl", -- 일반 HCL. Alloy는 전용 syntax/alloy.vim을 사용한다.
   "helm", -- Helm 차트 템플릿 ({{ }}를 YAML로 오파싱하지 않게)
   "ini", -- dosini (awscli config, systemd unit 등)
   "json",

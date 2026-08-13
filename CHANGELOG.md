@@ -39,6 +39,8 @@ nvim-min의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git �
 
 ### Changed
 
+- `.alloy`를 일반 HCL과 분리하고 전용 구문 강조를 추가했다. 점이 포함된 컴포넌트명이나
+  heredoc 뒤에서도 컴포넌트, 속성, 참조와 함수의 색이 파일 끝까지 유지된다.
 - 별도 `NVIM_APPNAME=nvim-min` 실행 방식 대신 기본 `nvim` 경로를 사용한다.
 - Markdown 내부 렌더링에서 HTML과 LaTeX 변환을 비활성화해 원문 편집을 우선한다.
 - `tflint`, `hadolint`, `sqlfluff`, `ansible-lint`를 `:LspInstallAll` 대상에 넣었다.
