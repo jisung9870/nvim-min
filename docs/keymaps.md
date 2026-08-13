@@ -39,7 +39,8 @@
 | `<leader>sc` / `sr` / `sn` | 명령 기록 / 마지막 picker / 알림 기록 |
 | `<leader>bd` / `bo` | 현재 버퍼 / 나머지 버퍼 삭제 |
 
-Explorer 목록에서는 `-`가 가로 분할, `|`가 세로 분할, `M`이 최대화 토글이다. 파일과 grep은
+Explorer 목록에서는 `-`가 가로 분할, `|`가 세로 분할, `M`이 최대화 토글이다. `y`로 파일을
+복사하고 `p`로 붙여넣으며, 이름이 겹치면 `-2`, `-3` 접미사를 자동으로 붙인다. 파일과 grep은
 `.git`, `node_modules`, `.terraform`, `.terragrunt-cache`, `vendor`, `__pycache__`, `.venv` 등을
 제외한다.
 

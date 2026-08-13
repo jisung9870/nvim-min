@@ -60,6 +60,7 @@ nvim
 | `lua/plugins.lua` | 플러그인 선언과 관리 명령 | 잠금 파일, 시작 시간, 플러그인 수 |
 | `lua/icons.lua` | Nerd Font·상태 아이콘 | 폰트가 없는 환경의 표시 |
 | `lua/theme.lua` | Catppuccin, 시맨틱 토큰, 진단 UI | light/dark 양쪽의 상태줄 색상과 float 가독성 |
+| `lua/tabline.lua` | 상단 파일 버퍼 목록과 클릭 전환 | 활성·수정 버퍼 표시와 긴 목록 |
 | `lua/statusline.lua` | 모드·Git·진단·LSP 상태 | 좁은 창과 비Git 버퍼 |
 | `lua/treesitter.lua` | 파서 설치·하이라이트·폴드·들여쓰기 | 신규 언어 파서와 쿼리 존재 여부 |
 | `lua/lsp.lua` | Mason 패키지와 LSP 설정 | 서버 이름, 실행 파일, root 탐지 |

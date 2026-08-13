@@ -87,6 +87,7 @@ lua/
   plugins.lua         vim.pack.add() — 이후부터 require 가능
   icons.lua           Nerd Font 글리프 (\u{} 이스케이프로 고정)
   theme.lua           catppuccin + 하이라이트. 색은 시맨틱 토큰(M.tokens)으로만 나감
+  tabline.lua         상단 열린 파일 버퍼 목록. 클릭하면 해당 버퍼로 이동
   statusline.lua      직접 작성. theme의 팔레트를 씀
   treesitter.lua      파서 설치 + FileType에서 하이라이트/폴드/들여쓰기
   lsp.lua             vim.lsp.config / vim.lsp.enable + mason
@@ -271,6 +272,9 @@ SQL 포맷을 비워 둔 건 의도다. `sqlfluff fix`는 쿼리를 크게 다�
 | `<C-s>` | 저장 |
 | `<Esc>` | 검색 하이라이트 지우기 |
 
+상단 파일 탭은 열린 일반 파일 버퍼를 표시한다. 현재 파일과 수정된 파일을 구분하며 마우스로
+클릭해 전환할 수 있다. 키보드 전환은 `H` / `L`, 목록 검색은 `<leader>fb`를 사용한다.
+
 ### 찾기 (`<leader>f`, `<leader>s`)
 
 | 키 | 동작 |
@@ -284,7 +288,8 @@ SQL 포맷을 비워 둔 건 의도다. `sqlfluff fix`는 쿼리를 크게 다�
 | `<leader>sb` / `sk` / `sh` | 버퍼 내 검색 / 키맵 / 도움말 |
 | `<leader>sr` | 마지막 picker 다시 열기 |
 
-탐색기 안에서 `-` 가로 분할, `|` 세로 분할, `M` 최대화.
+탐색기 안에서 `-` 가로 분할, `|` 세로 분할, `M` 최대화. `y`로 파일을 복사하고 `p`로
+붙여넣는다. 같은 폴더나 이름이 이미 있는 폴더에 붙이면 `-2`, `-3` 접미사를 붙인다.
 picker/grep은 `node_modules` `.terraform` `.terragrunt-cache` `vendor` `__pycache__` `.venv`를 제외한다.
 
 ### 코드 (`<leader>c`)

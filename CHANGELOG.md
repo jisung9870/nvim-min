@@ -9,6 +9,7 @@ nvim-min의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git �
 
 ### Added
 
+- 열린 파일 버퍼와 수정 상태를 보여주는 상단 탭라인. 탭을 클릭하면 해당 버퍼로 이동한다.
 - 기본 `~/.config/nvim` 설치와 플러그인·Treesitter 초기 구성을 자동화하는 `install.sh`.
 - `vim.pack` 기반의 독립 Neovim 구성과 플러그인 잠금 파일
 - LSP, 자동완성, 포맷, 린트, Treesitter, 검색, Git, 터미널 기능
@@ -62,6 +63,8 @@ nvim-min의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git �
 
 ### Fixed
 
+- Snacks explorer에서 `y` 후 같은 디렉터리에 `p`로 붙여넣으면 중복 이름 오류가 나던 문제.
+  충돌 시 `-2`, `-3` 접미사를 자동으로 선택한다.
 - 플레이북을 열 때마다 뜨던 `Unable to load schema from
   'https://json.schemastore.org/ansible-playbook.json': No content.` 진단.
   해당 URL은 301 뒤 404이고 yamlls가 리다이렉트를 따라가지 않는다.
