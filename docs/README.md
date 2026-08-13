@@ -2,7 +2,7 @@
 
 ## 현재 상태
 
-nvim-min은 `NVIM_APPNAME`으로 기존 Neovim 설정과 분리해 실행하는 `vim.pack` 기반 구성이다.
+nvim-min은 기본 `nvim` 경로에 설치해 바로 실행하는 `vim.pack` 기반 구성이다.
 문서는 `nvim-min` 브랜치의 커밋 `80d026b`를 기준으로 작성했으며, 아직 정식 Git 태그는 없다.
 
 ## 문서 지도

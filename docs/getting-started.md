@@ -2,10 +2,10 @@
 
 ## 목표와 완료 기준
 
-기존 `~/.config/nvim`을 건드리지 않고 nvim-min을 별도 앱으로 실행한다. 다음 조건을 모두
+nvim-min을 기본 Neovim 설정으로 설치해 별도 환경변수 없이 실행한다. 다음 조건을 모두
 만족하면 설치가 완료된 것이다.
 
-- `NVIM_APPNAME=nvim-min nvim`이 오류 없이 열린다.
+- `nvim`이 오류 없이 열린다.
 - `:PackStatus`에 플러그인 목록이 나타난다.
 - `:checkhealth`에서 필수 실행 파일 관련 차단 오류가 없다.
 - 작업 언어의 파일에서 Treesitter 하이라이트와 LSP가 동작한다.
@@ -43,15 +43,29 @@ brew install tree-sitter-cli ripgrep fd macism gitui
 
 ## 설치
 
-기본 설치 위치는 `~/.config/nvim-min`이다.
+기본 설치 위치는 `~/.config/nvim`이다. 자동 설치 스크립트는 기존 설정을 덮어쓰지 않으며,
+대상 경로가 이미 있으면 안전하게 중단한다.
 
 ```sh
-git clone https://github.com/jisung9870/nvim-min.git ~/.config/nvim-min
-NVIM_APPNAME=nvim-min nvim
+curl -fsSL https://raw.githubusercontent.com/jisung9870/nvim-min/main/install.sh | sh
+nvim
 ```
 
-첫 실행에서는 `vim.pack`이 `nvim-pack-lock.json`에 고정된 리비전으로 플러그인을 설치한다.
-파서는 백그라운드 설치될 수 있으므로 설치 메시지가 끝나기 전에 종료하지 않는다.
+스크립트는 Git과 Neovim 0.12 이상을 확인하고, `nvim-pack-lock.json`에 고정된 플러그인을
+설치한다. `tree-sitter` CLI와 C 컴파일러가 있으면 파서 설치도 완료한다. 설정만 복사하고
+초기 설치는 나중에 하려면 다음처럼 부트스트랩을 건너뛴다.
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/jisung9870/nvim-min/main/install.sh \
+  | sh -s -- --skip-bootstrap
+```
+
+수동 설치가 필요하면 다음 명령을 사용한다.
+
+```sh
+git clone https://github.com/jisung9870/nvim-min.git ~/.config/nvim
+nvim
+```
 
 ## 최초 구성
 
@@ -64,27 +78,22 @@ Neovim 안에서 다음 명령을 순서대로 실행한다.
 ```
 
 - `:TSSync`는 구성에 선언된 Treesitter 파서를 설치하고 완료까지 기다린다.
+- 설치 스크립트가 파서를 설치했다면 `:TSSync`를 다시 실행해도 안전하다.
 - `:LspInstallAll`은 빠진 LSP·린터·포매터만 Mason으로 설치한다.
 - `:checkhealth`는 Neovim과 플러그인의 실행 환경을 점검한다.
 
 설치 상태는 `:PackStatus`, LSP 상태는 `:checkhealth vim.lsp`로 다시 확인할 수 있다.
 
-## 기존 Neovim과의 분리
+## 기본 데이터 경로
 
-`NVIM_APPNAME=nvim-min`을 사용하면 기본 설정과 주요 데이터 경로가 분리된다.
+별도 `NVIM_APPNAME`을 지정하지 않으므로 Neovim의 기본 경로를 사용한다.
 
-| 종류 | nvim-min 경로 |
+| 종류 | 경로 |
 |---|---|
-| 설정 | `~/.config/nvim-min/` |
-| 플러그인·Mason·파서 데이터 | `~/.local/share/nvim-min/` |
-| 상태 | `~/.local/state/nvim-min/` |
-| 캐시 | `~/.cache/nvim-min/` |
-
-셸 별칭이 필요하면 셸 설정에 다음과 같이 추가한다.
-
-```sh
-alias nvim-min='NVIM_APPNAME=nvim-min nvim'
-```
+| 설정 | `~/.config/nvim/` |
+| 플러그인·Mason·파서 데이터 | `~/.local/share/nvim/` |
+| 상태 | `~/.local/state/nvim/` |
+| 캐시 | `~/.cache/nvim/` |
 
 ## 머신별 오버라이드
 
@@ -92,7 +101,7 @@ alias nvim-min='NVIM_APPNAME=nvim-min nvim'
 시작에 영향을 주지 않으며 `.gitignore` 대상이다.
 
 ```lua
--- ~/.config/nvim-min/lua/local.lua
+-- ~/.config/nvim/lua/local.lua
 vim.g.k8s_schema_version = "v1.33.1"
 vim.opt.colorcolumn = "100"
 ```

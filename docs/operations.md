@@ -103,8 +103,8 @@ git restore -- nvim-pack-lock.json
 ## 새 머신 복원
 
 ```sh
-git clone https://github.com/jisung9870/nvim-min.git ~/.config/nvim-min
-NVIM_APPNAME=nvim-min nvim
+curl -fsSL https://raw.githubusercontent.com/jisung9870/nvim-min/main/install.sh | sh
+nvim
 ```
 
 Neovim 안에서 다음을 실행한다.
@@ -121,7 +121,7 @@ Mason이 관리하지 않는 `tflint`, `terraform`, `goimports`, `gofumpt`, `all
 ## 변경 전후 검증 체크리스트
 
 - [ ] 변경 전 `nvim-pack-lock.json`과 시작 상태를 보존했다.
-- [ ] `NVIM_APPNAME=nvim-min nvim`이 오류 없이 시작한다.
+- [ ] `nvim`이 오류 없이 시작한다.
 - [ ] `:checkhealth`의 신규 오류가 없다.
 - [ ] 대표 파일에서 LSP, 포맷, 린트, Treesitter를 확인했다.
 - [ ] picker, Git, terminal 핵심 경로를 확인했다.

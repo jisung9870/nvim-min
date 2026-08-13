@@ -3,8 +3,8 @@
 ## 핵심 결정
 
 nvim-min은 기능 수보다 이해 가능성과 재현성을 우선한다. 모든 플러그인을 `vim.pack`으로 명시해
-시작 시 로드하고, `nvim-pack-lock.json`으로 정확한 리비전을 고정한다. 기존 LazyVim 구성과는
-`NVIM_APPNAME` 경계로 분리한다.
+시작 시 로드하고, `nvim-pack-lock.json`으로 정확한 리비전을 고정한다. 기본 Neovim 설정
+경로에 설치해 별도 환경변수 없이 실행한다.
 
 ## 설계 목표
 
@@ -29,7 +29,7 @@ Jenkins 서버 린터는 이전까지 비목표였으나 구현으로 전환했�
 ## 시작 흐름
 
 ```text
-NVIM_APPNAME=nvim-min nvim
+nvim
   -> init.lua: leader 설정
   -> options.lua: 플러그인이 읽을 전역 옵션 확정
   -> plugins.lua: 설치, 잠금 리비전 확인, runtimepath 등록

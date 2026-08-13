@@ -9,6 +9,7 @@ nvim-min의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git �
 
 ### Added
 
+- 기본 `~/.config/nvim` 설치와 플러그인·Treesitter 초기 구성을 자동화하는 `install.sh`.
 - `vim.pack` 기반의 독립 Neovim 구성과 플러그인 잠금 파일
 - LSP, 자동완성, 포맷, 린트, Treesitter, 검색, Git, 터미널 기능
 - Markdown 내부 렌더링과 marksman 기반 Markdown 언어 지원
@@ -37,6 +38,7 @@ nvim-min의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git �
 
 ### Changed
 
+- 별도 `NVIM_APPNAME=nvim-min` 실행 방식 대신 기본 `nvim` 경로를 사용한다.
 - Markdown 내부 렌더링에서 HTML과 LaTeX 변환을 비활성화해 원문 편집을 우선한다.
 - `tflint`, `hadolint`, `sqlfluff`, `ansible-lint`를 `:LspInstallAll` 대상에 넣었다.
   `tflint`는 설정만 있고 설치되지 않아 지금까지 아무 진단도 내지 않았다.

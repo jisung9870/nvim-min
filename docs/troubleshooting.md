@@ -4,7 +4,7 @@
 
 문제가 발생하면 설정 전체를 지우기 전에 다음 순서로 범위를 줄인다.
 
-1. `NVIM_APPNAME=nvim-min nvim`으로 올바른 앱을 실행했는지 확인한다.
+1. `nvim`이 `~/.config/nvim`의 설정을 읽는지 확인한다.
 2. 오류 메시지와 `:messages`를 확인한다.
 3. `:checkhealth`와 `:PackStatus`를 실행한다.
 4. 문제가 특정 언어, 플러그인, 머신에만 있는지 구분한다.
@@ -17,7 +17,7 @@
 ```sh
 nvim --version
 git --version
-NVIM_APPNAME=nvim-min nvim --headless '+checkhealth' '+qa'
+nvim --headless '+checkhealth' '+qa'
 ```
 
 Neovim 0.12 계열인지 먼저 확인한다. 네트워크가 정상이고 잠금 파일이 신뢰 가능한 상태라면
