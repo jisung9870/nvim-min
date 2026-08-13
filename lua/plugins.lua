@@ -7,7 +7,7 @@
 --   vim.pack.del(names)        디스크에서 삭제
 --   vim.pack.get()             설치된 목록
 --
--- 설치 위치: ~/.local/share/nvim-min/site/pack/core/opt/
+-- 설치 위치: ~/.local/share/nvim/site/pack/core/opt/
 -- 잠금 파일: ./nvim-pack-lock.json  (git 추적함 — 다른 머신에서 동일 리비전 재현)
 --
 -- lazy-loading은 없다. init.lua 소싱 중에는 `load=false`(= :packadd!)라

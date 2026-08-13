@@ -1,17 +1,58 @@
 # nvim-min
 
-`vim.pack` 기반 Neovim 설정. LazyVim을 대체한다.
-
-```
-NVIM_APPNAME=nvim-min nvim
-```
-
-기존 LazyVim(`~/.config/nvim`)은 그대로 남아 있고 서로 간섭하지 않는다.
-플러그인/파서/mason 설치물도 `~/.local/share/nvim-min/`에 따로 들어간다.
+`vim.pack` 기반 Neovim 설정. 기본 `nvim` 설정으로 바로 사용할 수 있다.
 
 설치부터 구조, 기능 구성, 전체 키맵, 운영·복구, 릴리스 절차까지는
 [상세 문서](docs/README.md)에서 확인할 수 있다. 사용자 영향 변경은
 [Changelog](CHANGELOG.md)에 기록한다.
+
+## 사전 설치: Neovim 0.12+
+
+이 설정은 Neovim 0.12 이상이 필요하다. 아래에서 운영체제에 맞는 방법으로 Neovim을 먼저
+설치하고, 마지막 명령에서 `NVIM v0.12` 이상이 출력되는지 확인한다. 다른 설치 방법은
+[Neovim 공식 설치 문서](https://neovim.io/doc/install/)에서 확인할 수 있다.
+
+### macOS
+
+[Homebrew](https://brew.sh/)가 설치되어 있다는 전제에서 다음 명령을 실행한다.
+
+```sh
+brew update
+brew install neovim
+nvim --version | head -n 1
+```
+
+### WSL (Ubuntu)
+
+Ubuntu 기본 저장소의 Neovim이 0.12보다 낮을 수 있으므로 공식 최신 Linux tarball을 설치한다.
+다음 명령은 일반적인 x86_64 WSL 환경을 기준으로 한다.
+
+```sh
+sudo apt-get update
+sudo apt-get install -y curl ca-certificates git build-essential
+
+curl -fLO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
+sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
+sudo ln -s /opt/nvim-linux-x86_64/bin/nvim /usr/local/bin/nvim
+hash -r
+nvim --version | head -n 1
+```
+
+`/usr/local/bin/nvim`이 이미 있다는 오류가 나오면 기존 Neovim 설치를 먼저 확인한다. 기존
+실행 파일을 자동으로 덮어쓰지는 않는다.
+
+## nvim-min 설치
+
+Neovim 준비가 끝났으면 설정을 설치한다.
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/jisung9870/nvim-min/main/install.sh | sh
+nvim
+```
+
+설치 스크립트는 `~/.config/nvim`이 이미 있으면 덮어쓰지 않고 중단한다. Git과 Neovim 0.12
+이상을 확인하고 설정을 설치한 뒤, 고정된 플러그인과 사용 가능한 경우 Treesitter 파서까지
+준비한다. 자세한 요구 사항과 수동 설치법은 [빠른 시작](docs/getting-started.md)을 참고한다.
 
 ## 왜 vim.pack인가
 
@@ -313,8 +354,13 @@ git checkout HEAD -- nvim-pack-lock.json   # 잠금 파일을 이전 리비전�
 **새 머신에서**
 
 ```sh
-git clone <repo> ~/.config/nvim-min       # 또는 심링크
-NVIM_APPNAME=nvim-min nvim                 # lockfile 리비전 그대로 설치됨
+curl -fsSL https://raw.githubusercontent.com/jisung9870/nvim-min/main/install.sh | sh
+nvim                                      # lockfile 리비전 그대로 설치됨
+```
+
+Neovim 안에서:
+
+```vim
 :TSSync
 :LspInstallAll
 ```
