@@ -34,7 +34,7 @@ nvim
   -> options.lua: 플러그인이 읽을 전역 옵션 확정
   -> plugins.lua: 설치, 잠금 리비전 확인, runtimepath 등록
   -> theme.lua -> statusline.lua
-  -> treesitter/lsp/completion/editing/markdown/finder/git/terminal
+  -> treesitter/lsp/completion/editing/markdown/finder/git/terminal/workspace
   -> keymaps.lua -> autocmds.lua
   -> local.lua: 선택적 머신 오버라이드
 ```
@@ -70,6 +70,7 @@ nvim
 | `lua/finder.lua` | picker·explorer·진단 목록 | 제외 경로와 대규모 저장소 성능 |
 | `lua/git.lua` | hunk·diff·Git UI | Git 저장소 밖의 동작 |
 | `lua/terminal.lua` | toggleterm·tmux 이동 | TUI의 Escape 키와 tmux 충돌 |
+| `lua/workspace.lua` | cwd별 편집기 세션과 스크래치 메모 | 명시적 파일 시작, 자동 저장, cwd 격리 |
 | `lua/keymaps.lua` | 공통 키맵 | 플러그인/Neovim 기본 키 충돌 |
 | `lua/autocmds.lua` | 자동 명령과 파일 타입 | 이벤트 중복과 버퍼 로컬 상태 |
 | `lua/local.lua` | 로컬 전용 오버라이드 | Git에 포함되지 않는지 확인 |

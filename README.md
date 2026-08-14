@@ -97,6 +97,7 @@ lua/
   finder.lua          snacks picker·explorer + 검색 키맵
   git.lua             gitsigns + diffview
   terminal.lua        toggleterm + tmux navigator
+  workspace.lua       cwd별 세션 자동 복원 + 프로젝트 스크래치 메모
   keymaps.lua         플러그인과 무관한 키맵
   autocmds.lua        autocmd + filetype 감지
   local.lua           머신별 오버라이드 (git 추적 안 함, 없어도 됨)
@@ -309,6 +310,7 @@ picker/grep은 `node_modules` `.terraform` `.terragrunt-cache` `vendor` `__pycac
 | `<leader>cd` | 현재 줄 진단 |
 | `]d` `[d` / `]e` `[e` | 다음·이전 진단 / 에러 |
 | `<leader>xx` / `xX` | 버퍼 / 워크스페이스 진단 목록 |
+| `<leader>uv` | 현재 줄의 전체 진단 메시지 펼치기 |
 
 ### Git (`<leader>g`)
 
@@ -319,7 +321,7 @@ picker/grep은 `node_modules` `.terraform` `.terragrunt-cache` `vendor` `__pycac
 | `<leader>gs` / `gr` | hunk stage / reset (visual 선택 범위도 됨) |
 | `<leader>gp` / `gb` | hunk 미리보기 / blame 토글 |
 | `<leader>gd` / `gh` / `gH` | diffview 열기 / 파일 히스토리 / 브랜치 히스토리 |
-| `<leader>gc` / `gt` | 커밋 로그 / status |
+| `<leader>gc` / `gf` / `gt` | 커밋 로그 / 현재 파일 로그 / status |
 | `vih` `dih` | hunk 텍스트 오브젝트 |
 
 ### 터미널 (`<leader>t`)
@@ -333,9 +335,26 @@ picker/grep은 `node_modules` `.terraform` `.terragrunt-cache` `vendor` `__pycac
 `<Esc>`로 터미널 모드를 빠져나오는 건 toggleterm 버퍼에만 걸려 있다.
 gitui나 Claude Code처럼 ESC를 직접 받아야 하는 TUI는 영향받지 않는다.
 
+### 프로젝트 상태 (`<leader>q`)
+
+| 키 | 동작 |
+|---|---|
+| `<leader>qs` / `qr` | 현재 cwd의 Neovim 창·탭·버퍼 세션 저장 / 복원 |
+| `<leader>.` | 현재 cwd 전용 Markdown 스크래치 메모 열기 |
+
+파일 인자 없이 `nvim`을 실행하면 같은 cwd에서 마지막으로 저장한 세션을 자동 복원하고,
+종료할 때 다시 저장한다. `bb tm`은 tmux 프로젝트 전환을 담당하고 이 기능은 Neovim 내부
+레이아웃만 담당한다. 세션과 메모는 각각 `stdpath("state")/sessions`,
+`stdpath("state")/scratch`에 저장되어 Git 작업 트리를 오염시키지 않는다.
+
 ### 토글 (`<leader>u`)
 
-`uf` 자동포맷(전역) · `uF` 자동포맷(버퍼) · `uw` wrap · `ul` 줄번호 · `ud` 진단 · `uh` inlay hint · `um` Markdown 렌더링 · `ub` light/dark 배경
+`uf` 자동포맷(전역) · `uF` 자동포맷(버퍼) · `uw` wrap · `ul` 줄번호 · `ud` 진단 ·
+`uv` 진단 상세 줄 · `uh` inlay hint · `um` Markdown 렌더링 · `ub` light/dark 배경 ·
+`uz` 집중 모드
+
+집중 모드는 현재 버퍼를 가운데 띄우고 탭라인과 상태줄을 잠시 숨기지만 좌측 줄 번호,
+상대 줄 번호와 sign column은 유지한다. 다시 `<leader>uz`를 누르면 원래 화면으로 돌아간다.
 
 ## 유지보수
 
@@ -351,6 +370,8 @@ gitui나 Claude Code처럼 ESC를 직접 받아야 하는 TUI는 영향받지 �
 | `:Mason` | mason UI |
 | `:FormatToggle[!]` | 자동 포맷 토글 (`!`는 현재 버퍼만) |
 | `:JenkinsLint` | 현재 파일을 Jenkins 서버로 검증 |
+| `:SessionSave` / `:SessionRestore` | 현재 cwd의 Neovim 세션 저장 / 복원 |
+| `:ProjectScratch` | 현재 cwd 전용 Markdown 스크래치 메모 열기 |
 
 **업데이트가 뭔가 깨뜨렸을 때**
 

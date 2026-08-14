@@ -89,6 +89,22 @@ map("n", "<leader>ud", function()
   vim.diagnostic.enable(not enabled)
   vim.notify("진단: " .. tostring(not enabled))
 end, { desc = "Toggle diagnostics" })
+local compact_diagnostics = vim.deepcopy(vim.diagnostic.config().virtual_text)
+local diagnostic_lines = false
+map("n", "<leader>uv", function()
+  diagnostic_lines = not diagnostic_lines
+  local virtual_lines = false
+  local virtual_text = compact_diagnostics
+  if diagnostic_lines then
+    virtual_lines = { current_line = true }
+    virtual_text = false
+  end
+  vim.diagnostic.config({
+    virtual_lines = virtual_lines,
+    virtual_text = virtual_text,
+  })
+  vim.notify("진단 상세 줄: " .. tostring(diagnostic_lines))
+end, { desc = "Toggle diagnostic virtual lines" })
 -- background를 바꾸면 nvim이 컬러스킴을 다시 읽고(:h 'background'),
 -- theme이 latte/mocha 중 맞는 팔레트로 토큰을 다시 채운다.
 map("n", "<leader>ub", function()

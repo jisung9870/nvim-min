@@ -99,7 +99,15 @@ require("snacks").setup({
   dashboard = { enabled = false },
   scroll = { enabled = false }, -- 부드러운 스크롤 — tmux에서 잔상이 남아 끔
   statuscolumn = { enabled = false },
-  zen = { enabled = false },
+  zen = {
+    enabled = true,
+    toggles = { dim = false, git_signs = false, mini_diff_signs = false },
+    show = { statusline = false, tabline = false },
+    win = {
+      width = 120,
+      wo = { number = true, relativenumber = true, signcolumn = "yes" },
+    },
+  },
 
   styles = {
     notification = { wo = { wrap = true } },
@@ -131,6 +139,9 @@ end, { desc = "Projects" })
 map("n", "<leader>e", function()
   Snacks.explorer()
 end, { desc = "Explorer" })
+map("n", "<leader>uz", function()
+  Snacks.zen()
+end, { desc = "Toggle focus mode" })
 
 -- 검색
 map("n", "<leader>sg", function()

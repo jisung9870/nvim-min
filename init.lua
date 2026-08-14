@@ -27,6 +27,7 @@ require("markdown")
 require("finder")
 require("git")
 require("terminal")
+require("workspace")
 require("keymaps")
 require("autocmds")
 

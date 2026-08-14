@@ -17,6 +17,8 @@
 | `<C-s>` | Insert, Select, Normal | 저장 후 Normal 모드 |
 | `<Esc>` | Normal | 검색 하이라이트 지우기 |
 | `<leader>qq` | Normal | 모든 창 종료 |
+| `<leader>qs` / `qr` | Normal | 현재 cwd의 Neovim 세션 저장 / 복원 |
+| `<leader>.` | Normal | 현재 cwd의 자동 저장 스크래치 메모 |
 | `<leader>-` / `<leader>\|` | Normal | 아래 / 오른쪽으로 창 분할 |
 | `<leader>wd` | Normal | 현재 창 닫기 |
 | `<C-Up/Down>` | Normal | 창 높이 조절 |
@@ -61,6 +63,7 @@ LSP가 현재 버퍼에 연결된 경우에만 LSP 키가 활성화된다.
 | `]e` / `[e` | 다음 / 이전 오류 |
 | `<leader>xx` / `xX` | 버퍼 / 워크스페이스 진단 목록 |
 | `<leader>uh` | 해당 서버가 지원할 때 inlay hint 토글 |
+| `<leader>uv` | 현재 줄의 전체 진단 메시지를 줄 아래에 표시 |
 
 Neovim 0.11 기본 `grn`, `gra`, `grr`, `gri`, `grt` 매핑은 `gr` prefix 지연을 막기 위해 제거한다.
 동일 기능은 위 키맵으로 제공한다.
@@ -105,6 +108,7 @@ Neovim 0.11 기본 `grn`, `gra`, `grr`, `gri`, `grt` 매핑은 `gr` prefix 지�
 | `<leader>ud` | 진단 표시 토글 |
 | `<leader>um` | Markdown 내부 렌더링 토글 |
 | `<leader>ub` | light/dark 배경 토글; 테마와 상태줄이 함께 전환된다 |
+| `<leader>uz` | 집중 모드; 탭라인·상태줄은 숨기고 줄 번호는 유지한다 |
 | `<leader>cp` / `cu` | 플러그인 상태 / 업데이트 |
 | `<leader>mt` | macOS에서 현재 Markdown을 Typora로 열기 |
 

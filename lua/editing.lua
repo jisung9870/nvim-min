@@ -305,6 +305,7 @@ wk.add({
   { "<leader>f", group = "file/find" },
   { "<leader>g", group = "git" },
   { "<leader>gx", group = "conflict" },
+  { "<leader>q", group = "session/quit" },
   { "<leader>s", group = "search" },
   { "<leader>t", group = "terminal" },
   { "<leader>u", group = "ui/toggle" },
