@@ -74,7 +74,7 @@ spec 필드도 4개다: `src`, `name`, `version`, `data`.
 - 시작이 150ms를 넘을 때
 - nvim-dap + neotest급 스택이 필요해질 때
 
-현재: 플러그인 18개 (같은 머신·같은 파일에서 기존 17개 구성은 137ms, LazyVim은 273–413ms).
+현재: 플러그인 19개 (같은 머신·같은 파일에서 기존 17개 구성은 137ms, LazyVim은 273–413ms).
 
 ## 구조
 
@@ -97,6 +97,7 @@ lua/
   finder.lua          snacks picker·explorer + 검색 키맵
   git.lua             gitsigns + diffview
   terminal.lua        toggleterm + tmux navigator
+  ai.lua              Sidekick + Claude Code/Codex 우측 패널
   workspace.lua       cwd별 세션 자동 복원 + 프로젝트 스크래치 메모
   keymaps.lua         플러그인과 무관한 키맵
   autocmds.lua        autocmd + filetype 감지
@@ -121,7 +122,7 @@ nvim-pack-lock.json   플러그인 리비전 잠금 — git으로 추적한다
 `accent` `accent_alt` / `ok` `info` `warn` `err` `hint` `modified` /
 `git_*` / `mode_*` 로 나뉜다.
 
-## 플러그인 18개
+## 플러그인 19개
 
 | 플러그인 | 역할 |
 |---|---|
@@ -134,6 +135,7 @@ nvim-pack-lock.json   플러그인 리비전 잠금 — git으로 추적한다
 | conform.nvim | 포맷 |
 | nvim-lint | LSP가 못 주는 진단만 (yamllint / actionlint / tflint / hadolint / sqlfluff) |
 | snacks.nvim | picker, explorer, indent, notifier, input, bigfile |
+| sidekick.nvim | Claude Code·Codex 우측 패널과 편집기 문맥 전달 |
 | which-key.nvim | 키맵 발견성 |
 | gitsigns.nvim | hunk 단위 git |
 | diffview.nvim | 커밋/히스토리 diff |
@@ -312,6 +314,24 @@ picker/grep은 `node_modules` `.terraform` `.terragrunt-cache` `vendor` `__pycac
 | `<leader>xx` / `xX` | 버퍼 / 워크스페이스 진단 목록 |
 | `<leader>uv` | 현재 줄의 전체 진단 메시지 펼치기 |
 
+### AI agent (`<leader>a`)
+
+| 키 | 동작 |
+|---|---|
+| `<leader>aa` | 설치된 Claude Code / Codex 선택 |
+| `<leader>ac` / `ax` | Claude Code / Codex 우측 패널 토글 |
+| `<leader>af` | 현재 파일을 활성 AI agent에 전달 |
+| `<leader>at` | 현재 줄·선택 영역·진단을 포함한 문맥 전달 |
+| `<leader>av` (Visual) | 선택 영역 전달 |
+| `<leader>ap` | 리뷰·설명·수정·테스트 프롬프트 선택 |
+| `<leader>aq` | 활성 AI agent 패널에서 detach |
+
+패널 안에서는 `Ctrl-q`로 숨기고 `Ctrl-z`로 편집 창에 돌아간다. AI가 디스크의 파일을
+수정하면 Neovim이 변경을 감지해 다시 읽는다. tmux가 설치되어 있으면 패널을 숨기거나
+Neovim을 다시 열어도 Claude/Codex CLI 세션을 이어갈 수 있다. agent 자체를 끝내려면 패널에서
+`/exit`를 사용한다. Copilot 기반 Next Edit
+Suggestions는 사용하지 않는다.
+
 ### Git (`<leader>g`)
 
 | 키 | 동작 |
@@ -411,6 +431,8 @@ Neovim 안에서:
 | `ansible` | `ansiblels`가 모듈을 해석할 때 씀 | Ansible 진단 없음 |
 | `gitui` 또는 `lazygit` | `<leader>gg` | 명령 못 찾음 |
 | `bb` | `<leader>tp` tmux 세션 전환 | 명령 못 찾음 |
+| `claude` | `<leader>ac` Claude Code 패널 | 해당 패널만 비활성화 |
+| `codex` | `<leader>ax` Codex 패널 | 해당 패널만 비활성화 |
 | `curl` | Jenkinsfile 검증 (macOS 기본 포함, 8.3+) | 조용히 비활성화 |
 
 ## 아직 안 옮긴 것
@@ -422,7 +444,6 @@ LazyVim 쪽에 있고 여기 없는 것들. 필요해지면 그때 옮긴다.
 - **snacks explorer 커스텀 액션** — 파일 복제(`C`), 크기·수정시각 표시(`T`)
 - **octo / gitlab / kubectl / csvview / gitgraph**
 - **DAP, neotest** — 이걸 넣게 되면 lazy.nvim 전환 기준에 걸린다
-- **AI 플러그인** (claudecode, copilot)
 
 **안 옮기는 것으로 결정된 것** — 위 목록과 달리 대기 상태가 아니다.
 

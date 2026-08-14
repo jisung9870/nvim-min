@@ -18,7 +18,7 @@ nvim-min은 기능 수보다 이해 가능성과 재현성을 우선한다. 모�
 
 - 대규모 플러그인 배포판과 같은 기능 범위
 - 모든 플러그인의 지연 로딩
-- DAP·neotest·AI 도구의 기본 포함
+- DAP·neotest의 기본 포함
 - 내용 기반 Kubernetes 스키마 자동 감지
 
 Jenkins 서버 린터는 이전까지 비목표였으나 구현으로 전환했다. 판단 근거는 이 문서의
@@ -34,7 +34,7 @@ nvim
   -> options.lua: 플러그인이 읽을 전역 옵션 확정
   -> plugins.lua: 설치, 잠금 리비전 확인, runtimepath 등록
   -> theme.lua -> statusline.lua
-  -> treesitter/lsp/completion/editing/markdown/finder/git/terminal/workspace
+  -> treesitter/lsp/completion/editing/markdown/finder/git/terminal/ai/workspace
   -> keymaps.lua -> autocmds.lua
   -> local.lua: 선택적 머신 오버라이드
 ```
@@ -70,6 +70,7 @@ nvim
 | `lua/finder.lua` | picker·explorer·진단 목록 | 제외 경로와 대규모 저장소 성능 |
 | `lua/git.lua` | hunk·diff·Git UI | Git 저장소 밖의 동작 |
 | `lua/terminal.lua` | toggleterm·tmux 이동 | TUI의 Escape 키와 tmux 충돌 |
+| `lua/ai.lua` | Sidekick CLI 패널·문맥 전달 | Claude/Codex 감지, 패널 키, tmux 유무 |
 | `lua/workspace.lua` | cwd별 편집기 세션과 스크래치 메모 | 명시적 파일 시작, 자동 저장, cwd 격리 |
 | `lua/keymaps.lua` | 공통 키맵 | 플러그인/Neovim 기본 키 충돌 |
 | `lua/autocmds.lua` | 자동 명령과 파일 타입 | 이벤트 중복과 버퍼 로컬 상태 |

@@ -9,6 +9,8 @@ nvim-min의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git �
 
 ### Added
 
+- Sidekick 기반 Claude Code·Codex 우측 AI 패널. 현재 파일, 선택 영역, 커서 문맥과 진단을
+  전달하며 tmux가 있으면 CLI 세션을 유지한다.
 - cwd별 창·탭·버퍼 세션 자동 저장/복원과 수동 `<leader>qs` / `<leader>qr` 제어.
 - 줄 번호를 유지하면서 탭라인·상태줄을 숨기는 `<leader>uz` 집중 모드.
 - 현재 줄의 전체 진단 메시지를 줄 아래에 펼치는 `<leader>uv` 토글.

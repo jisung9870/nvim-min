@@ -2,7 +2,7 @@
 
 ## 구성 요약
 
-현재 잠금 파일에는 플러그인 18개가 기록되어 있다. 구성은 DevOps 작업의 YAML, Jenkinsfile,
+현재 잠금 파일에는 플러그인 19개가 기록되어 있다. 구성은 DevOps 작업의 YAML, Jenkinsfile,
 Python, Terraform, SQL, Go 사용을 우선하며 Markdown 편집과 탐색·Git·터미널 기능을 포함한다.
 
 ## 플러그인
@@ -16,6 +16,7 @@ Python, Terraform, SQL, Go 사용을 우선하며 Markdown 편집과 탐색·Git
 | 완성 | `blink.cmp` 1.x | LSP·경로·snippet·buffer 완성 |
 | 품질 | `conform.nvim`, `nvim-lint` | 포맷과 비LSP 진단 |
 | 탐색 | `snacks.nvim` | picker, explorer, 알림, 큰 파일 처리 |
+| AI | `sidekick.nvim` | Claude Code·Codex 우측 패널과 편집기 문맥 전달 |
 | 발견성 | `which-key.nvim` | leader 그룹 표시 |
 | Git | `gitsigns.nvim`, `diffview.nvim` | hunk와 diff/히스토리 |
 | 터미널 | `toggleterm.nvim`, `vim-tmux-navigator` | 터미널과 tmux 이동 |
@@ -37,6 +38,18 @@ Neovim을 시작하면 `sessions/<해시>.vim`을 자동 복원하고, 종료할
 `scratch/<프로젝트명>-<해시>.md`는 `<leader>.`로 여는 프로젝트 메모다. 버퍼를 떠나거나
 Neovim이 포커스를 잃거나 종료할 때 자동 저장된다. 두 기능 모두 Git 저장소 밖의 로컬 상태이며,
 tmux 세션과 프로젝트 프로세스 수명주기는 계속 `bb tm`이 담당한다.
+
+## AI agent
+
+Sidekick은 Copilot 기반 Next Edit Suggestions를 끄고 CLI 패널 기능만 사용한다. `<leader>ac`과
+`<leader>ax`는 각각 Claude Code와 Codex를 72열 우측 split에서 실행한다. 현재 파일, Visual
+선택 영역, 커서 위치와 진단을 프롬프트 문맥으로 보낼 수 있으며 agent가 디스크 파일을 바꾸면
+`autoread`로 편집 버퍼를 갱신한다.
+
+tmux가 있으면 Sidekick 전용 tmux 세션을 사용하고, 없으면 일반 Neovim terminal로 동작한다.
+Claude와 Codex CLI는 Sidekick이 설치하지 않으므로 각 운영체제에서 별도로 준비해야 한다.
+현재 Sidekick의 health 검사는 CLI 전용 구성에서도 Copilot LSP 부재를 오류로 표시하지만,
+NES를 비활성화한 이 구성의 Claude/Codex 패널 동작과는 무관하다.
 
 ## LSP와 Mason
 
@@ -224,7 +237,7 @@ Alloy는 HCL에서 영감을 받았지만 점이 포함된 컴포넌트명과 �
 - 파일 내용 기반 Kubernetes 스키마 선택
 - workbench 프로젝트·worktree·agent 통합
 - octo, GitLab, kubectl, csvview, gitgraph
-- DAP, neotest, AI 플러그인
+- DAP, neotest
 
 이 목록은 결함이 아니라 현재 비목표다. 요구가 생기면 [구조와 설계](architecture.md)의 전환
 기준과 시작 시간 영향을 먼저 평가한다.

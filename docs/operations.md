@@ -30,6 +30,7 @@
 | `:SessionSave` | 현재 cwd의 창·탭·파일 버퍼 저장 | 파일 내용 자체는 먼저 저장해야 함 |
 | `:SessionRestore` | 현재 cwd의 마지막 편집기 세션 복원 | 현재 창 레이아웃이 저장된 레이아웃으로 바뀜 |
 | `:ProjectScratch` | 현재 cwd의 Markdown 메모 열기 | state 경로에 자동 저장되며 Git에는 포함되지 않음 |
+| `:Sidekick cli select` | 설치된 AI CLI 선택 | 이 구성은 Claude Code와 Codex 키맵을 우선 제공 |
 
 ## 플러그인 업데이트
 

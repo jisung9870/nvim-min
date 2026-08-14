@@ -68,6 +68,21 @@ LSP가 현재 버퍼에 연결된 경우에만 LSP 키가 활성화된다.
 Neovim 0.11 기본 `grn`, `gra`, `grr`, `gri`, `grt` 매핑은 `gr` prefix 지연을 막기 위해 제거한다.
 동일 기능은 위 키맵으로 제공한다.
 
+## AI agent
+
+| 키 | 동작 |
+|---|---|
+| `<leader>aa` | 설치된 Claude Code / Codex 선택 |
+| `<leader>ac` / `ax` | Claude Code / Codex 우측 패널 토글 |
+| `<leader>af` | 현재 파일 전달 |
+| `<leader>at` | 현재 줄·선택 영역·진단을 포함한 문맥 전달 |
+| `<leader>av` | Visual 선택 영역 전달 |
+| `<leader>ap` | 준비된 AI 프롬프트 선택 |
+| `<leader>aq` | 활성 AI agent 패널에서 detach |
+
+AI 패널 안에서는 `Ctrl-q`로 숨기고 `Ctrl-z`로 편집 창에 포커스를 돌린다. `Esc`는 Claude
+Code와 Codex TUI에 그대로 전달된다. tmux 세션까지 끝내려면 agent 안에서 `/exit`를 사용한다.
+
 ## Git
 
 | 키 | 동작 |
