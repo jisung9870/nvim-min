@@ -17,6 +17,50 @@ local exclude = {
   ".venv",
 }
 
+-- 같은 디렉터리에 붙여넣어도 기존 파일을 덮어쓰지 않고 번호가 붙은 복제 이름을 만든다.
+local function copy_target(from, dir)
+  local name = vim.fs.basename(from)
+  local stem, ext = name:match("^(.*)(%.[^.]*)$")
+  if not stem or stem == "" then
+    stem, ext = name, ""
+  end
+
+  local index = 1
+  local target
+  repeat
+    index = index + 1
+    target = vim.fs.joinpath(dir, ("%s-%d%s"):format(stem, index, ext))
+  until not vim.uv.fs_stat(target)
+  return target
+end
+
+local function explorer_paste(picker)
+  local register = vim.v.register or "+"
+  local files = vim.split(vim.fn.getreg(register) or "", "\n", { plain = true, trimempty = true })
+  files = vim.tbl_filter(function(file)
+    return vim.fn.filereadable(file) == 1
+  end, files)
+
+  if #files == 0 then
+    Snacks.notify.warn(("The `%s` register does not contain any files"):format(register))
+    return
+  end
+
+  local dir = picker:dir()
+  for _, from in ipairs(files) do
+    local target = vim.fs.joinpath(dir, vim.fs.basename(from))
+    if vim.uv.fs_stat(target) then
+      target = copy_target(from, dir)
+    end
+    Snacks.picker.util.copy_path(from, target)
+  end
+
+  local Tree = require("snacks.explorer.tree")
+  Tree:refresh(dir)
+  Tree:open(dir)
+  require("snacks.explorer.actions").update(picker, { target = dir })
+end
+
 require("snacks").setup({
   -- 켠 모듈 --------------------------------------------------------------
   picker = {
@@ -29,6 +73,7 @@ require("snacks").setup({
       grep = { exclude = exclude },
       explorer = {
         hidden = true,
+        actions = { explorer_paste = explorer_paste },
         win = {
           list = {
             keys = {

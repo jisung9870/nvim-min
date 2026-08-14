@@ -17,6 +17,7 @@ require("options")
 require("plugins")
 
 require("theme")
+require("tabline")
 require("statusline")
 require("treesitter")
 require("lsp")

@@ -96,6 +96,7 @@ end
 
 local patterns = {
   ["Jenkinsfile.*"] = by_path("groovy"),
+  [".*%.Jenkinsfile"] = by_path("groovy"),
   [".*%.jenkinsfile"] = by_path("groovy"),
   [".*/%.github/workflows/.*%.ya?ml"] = by_path("yaml.ghaction"),
   [".*/playbooks/.*%.ya?ml"] = by_path("yaml.ansible"),
@@ -129,7 +130,7 @@ end
 
 vim.filetype.add({
   extension = {
-    alloy = "hcl", -- Grafana Alloy
+    alloy = "alloy", -- Grafana Alloy (HCL과 비슷하지만 별도 River 문법)
     tf = "terraform",
     tfvars = "terraform-vars",
   },

@@ -52,6 +52,11 @@ Markdown 내부 렌더링은 제목, 목록, 체크박스, 표와 코드 블록�
 `terraform`, `ansible`, `goimports`, `gofumpt`, `alloy`는 Mason이 배포하지 않으므로 사용하는
 언어에 맞게 시스템에 설치해야 한다.
 
+Jenkinsfile은 Groovy parser의 기본 문자열·주석·함수 강조에
+`after/queries/groovy/highlights.scm`을 합성한다. Declarative Pipeline 구조 directive는
+`@keyword.directive`, `stage`/`parallel`은 `@function.macro`, 조건과 post 상태는
+`@keyword.conditional`로 구분한다. 실행 step은 Groovy의 `@function`을 그대로 사용한다.
+
 ### Python 가상환경
 
 Pyright는 인터프리터 경로를 받지 못하면 `PATH`의 Python을 사용한다. 프로젝트 가상환경에만
@@ -122,7 +127,7 @@ Kubernetes 스키마는 다음 경로 패턴에만 연결된다.
 | Terraform 계열 | `tflint` |
 | Dockerfile | `hadolint` |
 | SQL | `sqlfluff` |
-| `Jenkinsfile*`, `*.jenkinsfile` | Jenkins 서버 `pipeline-model-converter/validate` |
+| `Jenkinsfile*`, `*.Jenkinsfile`, `*.jenkinsfile` | Jenkins 서버 `pipeline-model-converter/validate` |
 
 린트는 `BufWritePost`, `BufReadPost`, `InsertLeave`에서 실행된다. LSP와 같은 진단을 중복 제공하는
 린터는 추가하지 않는 것이 원칙이다.
@@ -179,16 +184,20 @@ Helm 차트의 `templates/` 아래 YAML과 `.tpl` 파일은 `helm` 파서를 사
 
 | 패턴 | 파일 타입 |
 |---|---|
-| `*.alloy` | `hcl` |
+| `*.alloy` | `alloy` |
 | `*.tf` | `terraform` |
 | `*.tfvars` | `terraform-vars` |
-| `Jenkinsfile*`, `*.jenkinsfile` | `groovy` |
+| `Jenkinsfile*`, `*.Jenkinsfile`, `*.jenkinsfile` | `groovy` |
 | GitHub workflow YAML | `yaml.ghaction` |
 | `playbooks/**/*.yml` | `yaml.ansible` |
 | `roles/*/{tasks,handlers,vars,defaults,meta}/*.yml` | `yaml.ansible` |
 | Ansible 표식이 있는 그 외 YAML | `yaml.ansible` |
 | Nginx 경로의 `*.conf` | `nginx` |
 | templates 경로의 YAML과 `*.tpl` | `helm` |
+
+Alloy는 HCL에서 영감을 받았지만 점이 포함된 컴포넌트명과 참조 등 별도 River 문법을 쓴다.
+일반 HCL Treesitter 파서는 긴 오류 노드 뒤의 강조를 잃으므로, `.alloy`에는 전용 Vim syntax를
+사용해 컴포넌트, 속성, 참조, 함수, 문자열과 heredoc을 파일 끝까지 구분한다.
 
 패턴에는 우선순위를 명시한다. Neovim은 패턴을 우선순위 내림차순으로 평가하되 우선순위가 0
 이하인 패턴은 확장자 표를 조회한 뒤에 평가한다. 기본값을 사용하면 `yml` 확장자 규칙이 먼저

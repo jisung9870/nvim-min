@@ -9,6 +9,7 @@ nvim-min의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git �
 
 ### Added
 
+- 열린 파일 버퍼와 수정 상태를 보여주는 상단 탭라인. 탭을 클릭하면 해당 버퍼로 이동한다.
 - 기본 `~/.config/nvim` 설치와 플러그인·Treesitter 초기 구성을 자동화하는 `install.sh`.
 - `vim.pack` 기반의 독립 Neovim 구성과 플러그인 잠금 파일
 - LSP, 자동완성, 포맷, 린트, Treesitter, 검색, Git, 터미널 기능
@@ -28,16 +29,20 @@ nvim-min의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git �
   확인용 `:PythonEnv` 명령을 함께 제공한다.
 - gopls 빌드 태그 설정. `vim.g.go_build_tags`(`lua/local.lua`) 또는
   `:GoBuildTags <태그>`로 지정하고, 인자 없이 실행하면 해제한다.
-- Jenkinsfile 검증. 저장 시 `Jenkinsfile*`과 `*.jenkinsfile`을 Jenkins의
+- Jenkinsfile 검증. 저장 시 `Jenkinsfile*`, `*.Jenkinsfile`, `*.jenkinsfile`을 Jenkins의
   `pipeline-model-converter/validate`로 보내 진단을 받는다. 수동 실행은 `:JenkinsLint`.
   자격증명(`JENKINS_URL` / `JENKINS_USER` / `JENKINS_TOKEN` 또는 대응하는 `vim.g`)이
   없으면 조용히 비활성화된다.
 - `<leader>ub` light/dark 배경 토글
 - `theme.lua`의 시맨틱 토큰 레이어(`M.tokens`, `M.rebuild()`). 색을 쓰는 모듈은
   Catppuccin 고유 색 이름 대신 의미 이름만 사용한다.
+- Jenkins Declarative Pipeline Treesitter 강조. 구조 directive, stage 선언,
+  조건·post 상태, `agent any`/`none`을 일반 Groovy 함수·변수와 구분한다.
 
 ### Changed
 
+- `.alloy`를 일반 HCL과 분리하고 전용 구문 강조를 추가했다. 점이 포함된 컴포넌트명이나
+  heredoc 뒤에서도 컴포넌트, 속성, 참조와 함수의 색이 파일 끝까지 유지된다.
 - 별도 `NVIM_APPNAME=nvim-min` 실행 방식 대신 기본 `nvim` 경로를 사용한다.
 - Markdown 내부 렌더링에서 HTML과 LaTeX 변환을 비활성화해 원문 편집을 우선한다.
 - `tflint`, `hadolint`, `sqlfluff`, `ansible-lint`를 `:LspInstallAll` 대상에 넣었다.
@@ -62,6 +67,8 @@ nvim-min의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git �
 
 ### Fixed
 
+- Snacks explorer에서 `y` 후 같은 디렉터리에 `p`로 붙여넣으면 중복 이름 오류가 나던 문제.
+  충돌 시 `-2`, `-3` 접미사를 자동으로 선택한다.
 - 플레이북을 열 때마다 뜨던 `Unable to load schema from
   'https://json.schemastore.org/ansible-playbook.json': No content.` 진단.
   해당 URL은 301 뒤 404이고 yamlls가 리다이렉트를 따라가지 않는다.

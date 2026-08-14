@@ -21,7 +21,7 @@ require("conform").setup({
     terraform = { "terraform_fmt" },
     tf = { "terraform_fmt" },
     ["terraform-vars"] = { "terraform_fmt" },
-    hcl = { "alloy_space" },
+    alloy = { "alloy_space" },
     sh = { "shfmt" },
     bash = { "shfmt" },
     lua = { "stylua" },
@@ -271,7 +271,7 @@ end
 
 vim.api.nvim_create_autocmd("BufWritePost", {
   group = vim.api.nvim_create_augroup("jenkins_lint", { clear = true }),
-  pattern = { "Jenkinsfile", "Jenkinsfile.*", "*.jenkinsfile" },
+  pattern = { "Jenkinsfile", "Jenkinsfile.*", "*.Jenkinsfile", "*.jenkinsfile" },
   callback = function()
     lint_jenkinsfile(false)
   end,
