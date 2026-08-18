@@ -222,6 +222,18 @@ Alloy는 HCL에서 영감을 받았지만 점이 포함된 컴포넌트명과 �
 일반 HCL Treesitter 파서는 긴 오류 노드 뒤의 강조를 잃으므로, `.alloy`에는 전용 Vim syntax를
 사용해 컴포넌트, 속성, 참조, 함수, 문자열과 heredoc을 파일 끝까지 구분한다.
 
+`alloy`와 `helm`은 Neovim 런타임에 없는 이름이라 대응하는 ftplugin도 없다. 그대로 두면
+`commentstring`이 비어 주석 토글(`gc`, `gcc`)이 조용히 아무 일도 하지 않으므로 `ftplugin/`에서
+직접 채운다. `alloy`는 `// %s`, `helm`은 차트 템플릿 기준으로 `# %s`를 쓴다.
+
+Helm은 파일별로 나눌 수 없다. 내장 주석 기능은 Treesitter가 붙은 버퍼에서
+`vim.filetype.get_option("helm", "commentstring")`으로 값을 구하는데, 이때 이름 없는 임시
+버퍼에서 ftplugin을 읽으므로 확장자 분기가 통하지 않는다. `_helpers.tpl`에도 `#`이 붙으니
+Go 템플릿 주석 `{{/* */}}`이 필요하면 직접 쓴다.
+
+`terraform-vars`처럼 Treesitter 파서가 붙는 파일 타입은 파서 언어의 `commentstring`이 쓰여
+따로 채우지 않아도 된다.
+
 패턴에는 우선순위를 명시한다. Neovim은 패턴을 우선순위 내림차순으로 평가하되 우선순위가 0
 이하인 패턴은 확장자 표를 조회한 뒤에 평가한다. 기본값을 사용하면 `yml` 확장자 규칙이 먼저
 일치해 위 규칙에 도달하지 않는다. 경로 규칙은 10, 내용 기반 규칙은 1을 사용한다.

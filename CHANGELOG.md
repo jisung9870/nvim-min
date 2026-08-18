@@ -73,6 +73,9 @@ nvim-min의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git �
 
 ### Fixed
 
+- `.alloy`와 Helm 차트 템플릿에서 주석 토글(`gc`, `gcc`)이 아무 일도 하지 않던 문제.
+  이 설정이 직접 만든 filetype이라 대응하는 ftplugin이 없어 `commentstring`이 비어
+  있었다. `ftplugin/alloy.vim`은 `// %s`를, `ftplugin/helm.vim`은 `# %s`를 채운다.
 - Snacks explorer에서 `y` 후 같은 디렉터리에 `p`로 붙여넣으면 중복 이름 오류가 나던 문제.
   충돌 시 `-2`, `-3` 접미사를 자동으로 선택한다.
 - 플레이북을 열 때마다 뜨던 `Unable to load schema from

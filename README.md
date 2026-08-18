@@ -102,6 +102,11 @@ lua/
   keymaps.lua         플러그인과 무관한 키맵
   autocmds.lua        autocmd + filetype 감지
   local.lua           머신별 오버라이드 (git 추적 안 함, 없어도 됨)
+syntax/
+  alloy.vim           Alloy 구문 강조 (HCL 파서로는 파일 끝까지 못 감)
+ftplugin/
+  alloy.vim           런타임에 없는 filetype이라 commentstring을 직접 채움 (gc)
+  helm.vim            같은 이유. 차트 템플릿 기준 `# %s`
 nvim-pack-lock.json   플러그인 리비전 잠금 — git으로 추적한다
 ```
 
