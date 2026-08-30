@@ -35,6 +35,10 @@ nvim-min을 기본 Neovim 설정으로 설치해 별도 환경변수 없이 실�
 | `bb`와 tmux | `<leader>tp` 프로젝트 전환 | 해당 키 실행 실패 |
 | Typora (macOS) | `<leader>mt` 외부 Markdown 열기 | 해당 앱 실행 실패 |
 
+WSL에서는 `iconv`와 Windows에 기본 포함된 `clip.exe`, `powershell.exe`가 보이면 자동으로
+Windows 클립보드에 연결한다. 따라서 일반 yank(`y`)도 한글을 포함해 Windows 호스트
+클립보드에 저장된다. 다른 환경에서는 Neovim의 기본 clipboard provider 자동 감지를 사용한다.
+
 macOS에서 필요한 선택 도구의 예시는 다음과 같다.
 
 ```sh

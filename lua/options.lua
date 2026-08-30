@@ -4,6 +4,37 @@
 
 local opt = vim.opt
 
+-- WSL에서는 내장 provider 자동 감지가 Windows 클립보드를 선택하지 않는다.
+-- 실행 파일이 모두 있을 때만 명시해 일반 Linux/macOS의 자동 감지는 그대로 둔다.
+if
+  vim.fn.has("wsl") == 1
+  and vim.fn.executable("iconv") == 1
+  and vim.fn.executable("clip.exe") == 1
+  and vim.fn.executable("powershell.exe") == 1
+then
+  local copy = { "sh", "-c", "iconv -f UTF-8 -t UTF-16LE | clip.exe" }
+  local paste = {
+    "powershell.exe",
+    "-NoLogo",
+    "-NoProfile",
+    "-Command",
+    '[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new(); [Console]::Out.Write((Get-Clipboard -Raw).ToString().Replace("`r", ""))',
+  }
+
+  vim.g.clipboard = {
+    name = "WslClipboard",
+    copy = {
+      ["+"] = copy,
+      ["*"] = copy,
+    },
+    paste = {
+      ["+"] = paste,
+      ["*"] = paste,
+    },
+    cache_enabled = 0,
+  }
+end
+
 -- 편집 기본
 opt.number = true
 opt.relativenumber = true

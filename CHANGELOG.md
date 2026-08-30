@@ -9,6 +9,8 @@ nvim-min의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git �
 
 ### Added
 
+- WSL에서 일반 yank를 Windows 호스트 클립보드로 보내고 `+`/`*` 레지스터에서 한글이 깨지지
+  않게 다시 읽는 UTF-8/UTF-16LE 변환 clipboard provider 자동 구성.
 - Sidekick 기반 Claude Code·Codex 우측 AI 패널. 현재 파일, 선택 영역, 커서 문맥과 진단을
   전달하며 tmux가 있으면 CLI 세션을 유지한다.
 - cwd별 창·탭·버퍼 세션 자동 저장/복원과 수동 `<leader>qs` / `<leader>qr` 제어.

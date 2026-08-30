@@ -125,6 +125,20 @@ Mason과 파서 설치물까지 잃으므로 최후 수단이다.
 터미널 폰트를 Nerd Font 패치본으로 설정한다. `lua/icons.lua`는 글리프 손상을 막기 위해 Unicode
 escape를 사용하지만, 폰트 자체가 없으면 렌더링할 수 없다.
 
+## yank가 호스트 클립보드에 들어가지 않음
+
+```vim
+:set clipboard?
+:lua print(vim.fn['provider#clipboard#Executable']())
+```
+
+- `clipboard=unnamedplus`인지 확인한다.
+- WSL에서는 provider가 `WslClipboard`여야 하며 `iconv`, `clip.exe`, `powershell.exe`가 모두
+  실행 가능해야 한다. `iconv`는 UTF-8 yank를 Windows용 UTF-16LE로 변환해 한글 깨짐을 막는다.
+- macOS, Wayland, X11에서는 각각 `pbcopy`, `wl-copy`, `xclip`/`xsel` 등 Neovim이 지원하는
+  clipboard provider가 필요하다.
+- SSH나 컨테이너에서 OSC 52를 사용할 때는 터미널과 tmux도 OSC 52 전달을 허용해야 한다.
+
 ## 검색이 느리거나 결과가 없음
 
 - `rg`와 `fd`가 실행 가능한지 확인한다.
