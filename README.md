@@ -2,6 +2,22 @@
 
 `vim.pack` 기반 Neovim 설정. 기본 `nvim` 설정으로 바로 사용할 수 있다.
 
+체크아웃 디렉터리에서 다음 세 명령으로 Neovim·tmux 설정을 함께 관리한다.
+
+```sh
+sh manage.sh install
+sh manage.sh upgrade
+sh manage.sh uninstall
+```
+
+`install`은 기존 설정을 백업하고 적용한다. `upgrade`는 로컬 변경이 없는 저장소를
+fast-forward한 뒤 적용한다. `uninstall`은 연결만 해제하고 데이터와 백업을 보존한다.
+Neovim 실행 파일 자체는 별도로 설치한다. 자세한 범위와 복구는 [운영 문서](docs/operations.md#설치적용업그레이드제거)를 참고한다.
+
+tmux 설정도 이 저장소의 `tmux/tmux.conf`에서 관리한다. 기존 설정을 보관하고 연결하려면
+`sh ~/.config/nvim/scripts/setup-tmux.sh --backup`을 실행한다.
+설치·플러그인·복구 절차는 [tmux 관리](docs/tmux.md)를 참고한다.
+
 설치부터 구조, 기능 구성, 전체 키맵, 운영·복구, 릴리스 절차까지는
 [상세 문서](docs/README.md)에서 확인할 수 있다. 사용자 영향 변경은
 [Changelog](CHANGELOG.md)에 기록한다.

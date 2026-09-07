@@ -9,15 +9,17 @@ repo_url=${NVIM_MIN_REPO_URL:-https://github.com/jisung9870/nvim-min.git}
 config_root=${XDG_CONFIG_HOME:-"$HOME/.config"}
 install_dir=${NVIM_MIN_INSTALL_DIR:-"$config_root/nvim"}
 bootstrap=1
+with_tmux=0
 
 usage() {
   cat <<'EOF'
-Usage: install.sh [--skip-bootstrap]
+Usage: install.sh [--skip-bootstrap] [--with-tmux]
 
 Installs nvim-min as the default Neovim configuration in ~/.config/nvim.
 
 Options:
   --skip-bootstrap  Install the configuration without downloading plugins/parsers
+  --with-tmux       Also link ~/.tmux.conf (refuses existing configurations)
   -h, --help        Show this help
 
 Environment overrides (mainly for testing or custom XDG layouts):
@@ -29,6 +31,7 @@ EOF
 for arg in "$@"; do
   case $arg in
     --skip-bootstrap) bootstrap=0 ;;
+    --with-tmux) with_tmux=1 ;;
     -h | --help)
       usage
       exit 0
@@ -86,6 +89,10 @@ trap 'rm -rf "$work_dir"' EXIT HUP INT TERM
 printf 'Cloning nvim-min into %s ...\n' "$install_dir"
 git clone --depth 1 "$repo_url" "$work_dir/repo"
 mv "$work_dir/repo" "$install_dir"
+
+if [ "$with_tmux" -eq 1 ]; then
+  sh "$install_dir/scripts/setup-tmux.sh"
+fi
 
 if [ "$bootstrap" -eq 1 ]; then
   printf 'Installing pinned plugins ...\n'

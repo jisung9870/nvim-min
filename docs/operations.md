@@ -5,6 +5,32 @@
 플러그인 업데이트와 설정 변경은 분리해서 검증한다. `nvim-pack-lock.json`은 재현 가능한 복구의
 핵심이므로 플러그인 변경과 함께 커밋하고, 임의로 삭제하거나 무시하지 않는다.
 
+## 설치·적용·업그레이드·제거
+
+체크아웃 안에서 사용자 계정으로 `sh manage.sh install`, `sh manage.sh upgrade`,
+`sh manage.sh uninstall`을 실행한다. `install`은 기존 설정을 고유한 백업 디렉터리에 보관하고
+Neovim과 tmux를 이 체크아웃에 연결한다. Neovim 0.12 이상이 필요하며 플러그인과 파서를
+설치한다. 설정만 적용하려면 `install --skip-bootstrap`을 사용한다.
+
+`upgrade`는 추적/미추적 파일 변경이 있으면 중단하고, 현재 브랜치의 upstream으로
+`git pull --ff-only`한다. 변경을 먼저 보관하거나 커밋한 뒤 재실행한다. 네트워크 실패나
+분기 이력 때문에 pull이 실패하면 적용 단계로 넘어가지 않는다. 출력된 이전 커밋은 복구에
+사용할 수 있다. 업데이트된 저장소의 잠금 파일을 따르며 모든 플러그인의 최신 버전을
+임의로 선택하지 않는다.
+
+실행 중인 tmux에는 즉시 재로드하며 Neovim은 다시 시작해야 한다. 설치 직후
+`readlink ~/.config/nvim`, `readlink ~/.tmux.conf`가 이 저장소를 가리키고
+`nvim --headless '+qa'`에 오류가 없는지 확인한다. XDG_CONFIG_HOME을 사용하면 Neovim 경로도
+그에 맞춰 바꾼다. tmux 확인과 백업 복구는 [tmux 관리](tmux.md)를 따른다.
+
+`uninstall`은 이 체크아웃 소유 설정만 해제한다. 설정 경로 자체가 체크아웃인 설치는
+`nvim.uninstalled.XXXXXX/nvim`으로 보관한다. Neovim 바이너리, Mason, 파서, 세션,
+TPM 플러그인, 머신별 로컬 파일은 남는다. 실행 중인 tmux의 옵션은 유지된다.
+다시 사용하려면 보관한 체크아웃에서 `sh manage.sh install`을 실행한다.
+기존 Neovim 설정으로 복구하려면 제거 후 출력된 백업의 `nvim`을 원래 설정 경로로 옮긴다.
+이전 버전으로 복구할 때는 로컬 변경을 보존한 뒤 출력된 이전 커밋을 체크아웃하고
+`sh manage.sh install`로 적용한다.
+
 ## 일상 점검
 
 | 대상 | 명령 | 정상 기준 |

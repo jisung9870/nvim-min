@@ -9,6 +9,12 @@ nvim-min의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git �
 
 ### Added
 
+- `manage.sh install|upgrade|uninstall`로 Neovim·tmux 설정 설치, 적용, fast-forward 업그레이드,
+  데이터 보존 제거를 제공. 업그레이드는 저장소의 플러그인 잠금 버전을 적용한다.
+
+- tmux 설정을 `tmux/tmux.conf`로 이전하고 기존 설정을 백업하는 `scripts/setup-tmux.sh` 제공.
+  새 설치에서 `install.sh --with-tmux`로 연결 가능. 기존 TPM 커밋 참고 파일도 함께 이전.
+
 - WSL에서 일반 yank를 Windows 호스트 클립보드로 보내고 `+`/`*` 레지스터에서 한글이 깨지지
   않게 다시 읽는 UTF-8/UTF-16LE 변환 clipboard provider 자동 구성.
 - Sidekick 기반 Claude Code·Codex 우측 AI 패널. 현재 파일, 선택 영역, 커서 문맥과 진단을

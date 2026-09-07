@@ -14,6 +14,7 @@ nvim-min은 기본 `nvim` 경로에 설치해 바로 실행하는 `vim.pack` 기
 | [기능과 언어 구성](configuration.md) | 기능을 추가·변경하는 사용자 | 플러그인, LSP, 포매터, 린터, 파일 타입 |
 | [키맵](keymaps.md) | 모든 사용자 | 영역별 기본 키와 충돌 주의사항 |
 | [운영과 유지보수](operations.md) | 유지보수 담당자 | 업데이트, 잠금 파일, 새 머신 복원, 롤백 |
+| [tmux 관리](tmux.md) | tmux 사용자 | 설정 연결, TPM, 로컬 설정, 검증과 복구 |
 | [문제 해결](troubleshooting.md) | 장애를 해결하는 사용자 | 증상별 진단 순서와 복구 방법 |
 | [릴리스 관리](release-management.md) | 릴리스 담당자 | 버전 정책, changelog, 검증, 태그와 복구 |
 | [Changelog](../CHANGELOG.md) | 모든 사용자 | 아직 배포되지 않은 사용자 영향 변경 |
