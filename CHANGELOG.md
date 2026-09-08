@@ -7,13 +7,16 @@ nvim-min의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git �
 
 ## [Unreleased]
 
+### Changed
+
+- tmux 설정·TPM 참고 잠금 파일·관리 문서를 `terminal-config`로 이전했다.
+  Neovim 설치·업그레이드·제거에서 tmux 관리를 분리하고 `--with-tmux`를 제거했다.
+  Neovim 내부 tmux navigator와 Sidekick 연동은 유지한다.
+
 ### Added
 
-- `manage.sh install|upgrade|uninstall`로 Neovim·tmux 설정 설치, 적용, fast-forward 업그레이드,
+- `manage.sh install|upgrade|uninstall`로 Neovim 설정 설치, 적용, fast-forward 업그레이드,
   데이터 보존 제거를 제공. 업그레이드는 저장소의 플러그인 잠금 버전을 적용한다.
-
-- tmux 설정을 `tmux/tmux.conf`로 이전하고 기존 설정을 백업하는 `scripts/setup-tmux.sh` 제공.
-  새 설치에서 `install.sh --with-tmux`로 연결 가능. 기존 TPM 커밋 참고 파일도 함께 이전.
 
 - WSL에서 일반 yank를 Windows 호스트 클립보드로 보내고 `+`/`*` 레지스터에서 한글이 깨지지
   않게 다시 읽는 UTF-8/UTF-16LE 변환 clipboard provider 자동 구성.

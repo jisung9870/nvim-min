@@ -1,5 +1,5 @@
 #!/bin/sh
-# Manage this checkout's Neovim and tmux configuration, preserving user data.
+# Manage this checkout's Neovim configuration, preserving user data.
 set -eu
 repo=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd -P)
 target="${XDG_CONFIG_HOME:-$HOME/.config}/nvim"
@@ -34,7 +34,6 @@ apply_config() {
       exit 1
     fi
   fi
-  sh "$repo/scripts/setup-tmux.sh" --backup
   if [ "$bootstrap" -eq 1 ]; then
     unset NVIM_APPNAME
     nvim --headless '+lua dofile(vim.fn.stdpath("config") .. "/scripts/sync-plugins.lua")' '+qa'
@@ -43,10 +42,7 @@ apply_config() {
     fi
     nvim --headless '+lua if vim.v.errmsg ~= "" then vim.cmd("cquit") end' '+qa'
   fi
-  if command -v tmux >/dev/null 2>&1 && tmux list-sessions >/dev/null 2>&1; then
-    tmux source-file "$HOME/.tmux.conf"
-  fi
-  echo 'Applied nvim-min and tmux. Restart Neovim to load changes.'
+  echo 'Applied nvim-min. Restart Neovim to load changes.'
 }
 
 case "$action" in
@@ -66,10 +62,6 @@ case "$action" in
     ;;
   uninstall)
     # Only detach configuration belonging to this checkout.
-    if [ -L "$HOME/.tmux.conf" ] && [ "$(readlink "$HOME/.tmux.conf")" = "$repo/tmux/tmux.conf" ]; then
-      unlink "$HOME/.tmux.conf"
-      echo 'Detached ~/.tmux.conf; running tmux sessions are unchanged.'
-    fi
     if owned; then
       if [ -L "$target" ]; then
         unlink "$target"
@@ -83,7 +75,7 @@ case "$action" in
     ;;
   help|-h|--help)
     echo 'Usage: sh manage.sh install|upgrade|uninstall [--skip-bootstrap]'
-    echo 'install: back up old configuration, link this checkout and tmux, bootstrap plugins/parsers'
+    echo 'install: back up old Neovim configuration, link this checkout, bootstrap plugins/parsers'
     echo 'upgrade: fast-forward a clean checkout, then apply it'
     echo 'uninstall: detach owned configuration, preserving all user data'
     ;;
