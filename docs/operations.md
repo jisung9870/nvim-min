@@ -66,7 +66,7 @@ Neovim은 다시 시작해야 한다. 설치 직후
    git status --short
    ```
 
-2. nvim-min에서 `:PackUpdate`를 실행한다.
+2. vim에서 `:PackUpdate`를 실행한다.
 3. 확인 버퍼의 변경 리비전을 검토한다.
 4. `:w`로 확정하거나 `:q`로 취소한다.
 5. Neovim을 다시 시작하고 아래 검증을 수행한다.
