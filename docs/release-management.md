@@ -2,7 +2,7 @@
 
 ## 정책 상태
 
-상태: 채택. nvim-min은 Git 태그와 `CHANGELOG.md`를 기준으로 릴리스를 관리한다. 현재 태그가
+상태: 채택. vim은 Git 태그와 `CHANGELOG.md`를 기준으로 릴리스를 관리한다. 현재 태그가
 없으므로 첫 릴리스 전까지 모든 사용자 영향 변경은 `Unreleased`에 기록한다.
 
 ## 버전 규칙
@@ -87,7 +87,7 @@ PATCH를 올린다. `1.0.0` 이후에는 위 표를 그대로 적용한다.
 7. 검증된 커밋에 annotated tag를 만든다.
 
    ```sh
-   git tag -a v0.1.0 -m "nvim-min v0.1.0"
+   git tag -a v0.1.0 -m "vim v0.1.0"
    git show --stat v0.1.0
    ```
 

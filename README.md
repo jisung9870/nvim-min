@@ -1,4 +1,4 @@
-# nvim-min
+# vim
 
 `vim.pack` 기반 Neovim 설정. 기본 `nvim` 설정으로 바로 사용할 수 있다.
 
@@ -41,7 +41,7 @@ nvim --version | head -n 1
 `/usr/local/bin/nvim`이 이미 있다는 오류가 나오면 기존 Neovim 설치를 먼저 확인한다. 기존
 실행 파일을 자동으로 덮어쓰지는 않는다.
 
-## nvim-min 설치
+## vim 설치
 
 Neovim 준비가 끝났으면 설정을 설치한다.
 

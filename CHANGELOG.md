@@ -1,6 +1,6 @@
 # Changelog
 
-nvim-min의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git 태그로 배포된 버전이 없으므로
+vim의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git 태그로 배포된 버전이 없으므로
 현재 변경은 모두 `Unreleased`에 속한다.
 
 작성 규칙과 실제 릴리스 절차는 [릴리스 관리 가이드](docs/release-management.md)를 따른다.
@@ -49,6 +49,8 @@ nvim-min의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git �
 
 ### Changed
 
+- Project display name을 `nvim-min`에서 `vim`으로 변경했다. Installer override는
+  `VIM_REPO_URL` / `VIM_INSTALL_DIR`로 변경하고 기존 `NVIM_MIN_*`도 호환성을 위해 유지한다.
 - `.alloy`를 일반 HCL과 분리하고 전용 구문 강조를 추가했다. 점이 포함된 컴포넌트명이나
   heredoc 뒤에서도 컴포넌트, 속성, 참조와 함수의 색이 파일 끝까지 유지된다.
 - 별도 `NVIM_APPNAME=nvim-min` 실행 방식 대신 기본 `nvim` 경로를 사용한다.
@@ -95,4 +97,4 @@ nvim-min의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git �
 - Jenkins API 토큰을 curl `--variable` / `--expand-user`로 자식 프로세스 환경에서만
   읽는다. 명령줄 인자에 담기지 않으므로 `ps`에 노출되지 않는다.
 
-[Unreleased]: https://github.com/jisung9870/nvim-min/commits/nvim-min
+[Unreleased]: https://github.com/jisung9870/nvim-min/commits/main

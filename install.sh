@@ -5,24 +5,26 @@ set -eu
 # This configuration intentionally owns Neovim's default app paths.
 unset NVIM_APPNAME
 
-repo_url=${NVIM_MIN_REPO_URL:-https://github.com/jisung9870/nvim-min.git}
+repo_url=${VIM_REPO_URL:-${NVIM_MIN_REPO_URL:-https://github.com/jisung9870/nvim-min.git}}
 config_root=${XDG_CONFIG_HOME:-"$HOME/.config"}
-install_dir=${NVIM_MIN_INSTALL_DIR:-"$config_root/nvim"}
+install_dir=${VIM_INSTALL_DIR:-${NVIM_MIN_INSTALL_DIR:-"$config_root/nvim"}}
 bootstrap=1
 
 usage() {
   cat <<'EOF'
 Usage: install.sh [--skip-bootstrap]
 
-Installs nvim-min as the default Neovim configuration in ~/.config/nvim.
+Installs vim as the default Neovim configuration in ~/.config/nvim.
 
 Options:
   --skip-bootstrap  Install the configuration without downloading plugins/parsers
   -h, --help        Show this help
 
 Environment overrides (mainly for testing or custom XDG layouts):
-  NVIM_MIN_REPO_URL    Git repository to clone
-  NVIM_MIN_INSTALL_DIR Configuration destination
+  VIM_REPO_URL         Git repository to clone
+  VIM_INSTALL_DIR      Configuration destination
+
+Legacy NVIM_MIN_REPO_URL and NVIM_MIN_INSTALL_DIR overrides remain supported.
 EOF
 }
 
@@ -74,16 +76,16 @@ fi
 if [ "$bootstrap" -eq 1 ] && [ "$install_dir" != "$config_root/nvim" ]; then
   cat >&2 <<EOF
 Error: automatic bootstrap requires the default path: $config_root/nvim
-Use --skip-bootstrap with NVIM_MIN_INSTALL_DIR, or set XDG_CONFIG_HOME instead.
+Use --skip-bootstrap with VIM_INSTALL_DIR, or set XDG_CONFIG_HOME instead.
 EOF
   exit 1
 fi
 
 mkdir -p "$(dirname "$install_dir")"
-work_dir=$(mktemp -d "${TMPDIR:-/tmp}/nvim-min.XXXXXX")
+work_dir=$(mktemp -d "${TMPDIR:-/tmp}/vim.XXXXXX")
 trap 'rm -rf "$work_dir"' EXIT HUP INT TERM
 
-printf 'Cloning nvim-min into %s ...\n' "$install_dir"
+printf 'Cloning vim into %s ...\n' "$install_dir"
 git clone --depth 1 "$repo_url" "$work_dir/repo"
 mv "$work_dir/repo" "$install_dir"
 
@@ -101,7 +103,7 @@ fi
 
 cat <<EOF
 
-nvim-min is installed as the default Neovim configuration.
+vim is installed as the default Neovim configuration.
 Start it with:
 
   nvim
