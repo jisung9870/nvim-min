@@ -65,12 +65,16 @@ nvim
 | `lua/treesitter.lua` | 파서 설치·하이라이트·폴드·들여쓰기 | 신규 언어 파서와 쿼리 존재 여부 |
 | `lua/lsp.lua` | Mason 패키지와 LSP 설정 | 서버 이름, 실행 파일, root 탐지 |
 | `lua/completion.lua` | blink.cmp | insert·cmdline 키 충돌 |
-| `lua/editing.lua` | 포맷·린트(Jenkins 검증 포함)·pairs·surround·입력기 | 저장 지연, 진단 중복, 자격증명 없는 환경 |
+| `lua/editing.lua` | 린트(Jenkins 검증 포함)·pairs·surround·입력기 | 저장 지연, 진단 중복, 자격증명 없는 환경 |
+| `lua/formatting.lua` | conform 설정, 저장 시 바뀐 줄만 포맷 (`scripts/format-changed.lua`와 공유) | 새 파일·git 밖 파일, range 미지원 포매터 |
 | `lua/markdown.lua` | Markdown 렌더링 | insert 모드 원문 편집 |
 | `lua/finder.lua` | picker·explorer·진단 목록 | 제외 경로와 대규모 저장소 성능 |
-| `lua/git.lua` | hunk·diff·Git UI | Git 저장소 밖의 동작 |
+| `lua/git.lua` | hunk·diff·Git UI, 너비별 Diffview 진입점 | Git 저장소 밖의 동작 |
+| `lua/agent_diff.lua` | `:AgentDiff` — tmux pane 스냅샷 대비 diff | tmux 밖, 스냅샷 없음, 커밋 소실 |
 | `lua/terminal.lua` | toggleterm·tmux 이동 | TUI의 Escape 키와 tmux 충돌 |
 | `lua/ai.lua` | Sidekick CLI 패널·문맥 전달 | Claude/Codex 감지, 패널 키, tmux 유무 |
+| `lua/review.lua` | 리뷰 의견 extmark와 전달 메시지 | 편집 중 위치 추적, 입력창 전달 |
+| `lua/layout.lua` | 너비별 Sidekick·Diffview 배치, 리사이즈 | winfixwidth 창 너비 유지 |
 | `lua/workspace.lua` | cwd별 편집기 세션과 스크래치 메모 | 명시적 파일 시작, 자동 저장, cwd 격리 |
 | `lua/keymaps.lua` | 공통 키맵 | 플러그인/Neovim 기본 키 충돌 |
 | `lua/autocmds.lua` | 자동 명령과 파일 타입 | 이벤트 중복과 버퍼 로컬 상태 |

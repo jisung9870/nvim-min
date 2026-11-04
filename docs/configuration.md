@@ -42,9 +42,25 @@ tmux 세션과 프로젝트 프로세스 수명주기는 계속 `bb tm`이 담�
 ## AI agent
 
 Sidekick은 Copilot 기반 Next Edit Suggestions를 끄고 CLI 패널 기능만 사용한다. `<leader>ac`과
-`<leader>ax`는 각각 Claude Code와 Codex를 72열 우측 split에서 실행한다. 현재 파일, Visual
+`<leader>ax`는 각각 Claude Code와 Codex를 우측 split에서 실행한다. 패널 너비는 화면의 40%(50~72열)이며 창 크기가 바뀌면 다시 계산한다. 현재 파일, Visual
 선택 영역, 커서 위치와 진단을 프롬프트 문맥으로 보낼 수 있으며 agent가 디스크 파일을 바꾸면
 `autoread`로 편집 버퍼를 갱신한다.
+
+### 에이전트 변경 검토
+
+- `:AgentDiff`(`<leader>gA`)는 tmux 에이전트 pane 옵션 `@agent_ui_snapshot*`가 가리키는 스냅샷
+  커밋과 "그 뒤의 트리"를 `DiffviewOpen <sha>..<tree>`로 연다. 그 뒤의 트리는 pane 옵션
+  `@agent_ui_after`가 있으면 그것을, 없으면 임시 index로 만든 현재 작업 트리를 쓴다
+  (`git diff <sha>`는 index 기준이라 요청 전부터 있던 untracked 파일이 삭제로 나오고 새 파일이
+  빠진다). 오른쪽이 트리 스냅샷이므로 diff를 연 뒤의 편집은 다시 `:AgentDiff`를 해야 보인다. 같은 저장소의 pane 중 스냅샷이 가장 최신인
+  것을 쓰고(현재 창 → 세션 순서), 여러 개면 선택을 묻는다. gitsigns 기준도 스냅샷으로 바꾸고
+  바뀐 hunk를 quickfix(`Agent · <프로젝트> · HH:MM`)에 채우며 상태줄에 `base:agent`를 표시한다.
+  `:AgentDiff off`로 되돌린다. 스냅샷은 tmux 쪽(`terminal-config`)이 만든다.
+- Diffview는 화면이 140칸 미만이면 세로 diff, 100칸 미만이면 파일 패널을 닫은 채 연다.
+- 리뷰 의견: `<leader>ar`로 줄(Visual은 범위)에 의견을 달면 줄 끝에 `▍ 의견`으로 보인다.
+  `<leader>aR`은 보내지 않은 의견을 한 메시지로 활성 CLI 입력창에 넣는다. Enter는 누르지
+  않으므로 확인 후 직접 보낸다. 보낸 의견은 흐리게 남고 `<leader>aC`로 지운다. 상태줄의
+  `의견 N`은 보내지 않은 의견 수다.
 
 tmux가 있으면 Sidekick 전용 tmux 세션을 사용하고, 없으면 일반 Neovim terminal로 동작한다.
 Claude와 Codex CLI는 Sidekick이 설치하지 않으므로 각 운영체제에서 별도로 준비해야 한다.
@@ -129,17 +145,50 @@ Kubernetes 스키마는 다음 경로 패턴에만 연결된다.
 | Go | `goimports`, `gofumpt` | 순서대로 실행 |
 | Terraform | `terraform_fmt` | `terraform`, `tf`, `terraform-vars` |
 | HCL/Alloy | `alloy fmt` 후 공백 변환 | `alloy`가 있을 때만 |
-| shell | `shfmt` | 2칸 들여쓰기 |
+| shell | `shfmt` | `.editorconfig`가 있으면 그 설정, 없으면 `-i 2 -ci` |
 | Lua | `stylua` | 저장소의 `stylua.toml` 사용 |
 | TOML | `taplo` | LSP와 같은 도구 |
 | Python | Ruff import 정리, Ruff format | 순서대로 실행 |
 | SQL | 없음 | 의도적 제외; `sqlfluff fix`는 쿼리를 크게 재작성한다 |
-| JSON/YAML | `prettier` | 2칸, semicolon 없음, single quote 옵션 |
+| JSON/YAML | `prettier` | 프로젝트 prettier 설정 파일이 있으면 그대로, 없으면 2칸·semicolon 없음·single quote |
 | Markdown | 없음 | 의도적인 공백 보존 |
 | 기타 | trailing whitespace 제거 | 기본 처리 |
 
+저장 시에는 git HEAD 대비 바뀐 줄만 포맷한다. 에이전트가 고친 파일을 저장해도 손대지 않은
+줄이 다시 쓰이지 않게 하려는 것이다. 설정은 `lua/formatting.lua`에 있다.
+
+- `ruff_format`, `prettier`(JSON), `stylua`는 바뀐 hunk마다 range로 호출한다.
+- 끝 공백 제거(`trim_whitespace`)는 바뀐 줄의 끝 공백만 직접 지운다.
+- range 옵션이 없는 `shfmt`와 YAML `prettier`는 결과를 직접 계산해, 결과의 모든 변경이 바뀐 줄
+  안에 있을 때만 적용한다. 포매터가 바뀌지 않은 줄(주변 줄, 위로 옮겨지는 줄)까지 건드리려
+  하면 그 포매터는 통째로 건너뛴다. 일부만 적용하면 줄이 사라질 수 있기 때문이다.
+  이 경우 바뀐 줄 자체도 포맷되지 않는다.
+- `ruff_organize_imports`, `terraform_fmt`, `gofumpt`, `goimports`, `taplo`, `alloy_space`는
+  줄을 옮기거나 파일 단위로만 맞출 수 있어 파일 전체를 포맷한다 (`M.whole_file`).
+- Markdown과 SQL은 포맷하지 않는다. conform은 빈 표를 "설정 없음"으로 보고 `trim_whitespace`를
+  적용하므로 `M.skip_filetypes`로 막는다 (Markdown 줄 끝 두 칸은 줄바꿈이다).
+- 끝 줄바꿈이 없는 파일은 포맷 뒤에도 없는 채로 둔다.
+- 새 파일(HEAD에 없음)은 파일 전체를 포맷한다. 비교는 디스크가 아니라 버퍼 내용 대 HEAD이다.
+- hunk가 30개를 넘으면 첫 줄부터 끝 줄까지 하나의 range로 합친다.
+
 저장 시 포맷 제한 시간은 3초다. 256KiB를 초과하는 파일, 전역 또는 버퍼 자동 포맷을 끈
-경우에는 저장 시 포맷하지 않는다. 수동 포맷은 `<leader>cf`다.
+경우에는 저장 시 포맷하지 않는다. 수동 포맷 `<leader>cf`는 파일 전체를 포맷한다.
+
+### 에이전트 훅용 헤드리스 포맷
+
+같은 로직을 에디터 없이 한 파일에 적용한다. 설정 전체, LSP, Treesitter를 로드하지 않고
+conform만 쓰며, 항상 종료 코드 0이고 문제는 stderr에 한 줄로 남긴다. 내용이 바뀐 경우에만
+파일을 쓴다. 파일 종류는 `vim.filetype.match`로 정한다.
+
+- git 저장소 밖의 파일(예: `~/.claude/settings.json`)은 건너뛴다. 저장소 안의 추적되지 않은
+  새 파일만 전체를 포맷한다.
+- 전체 기한은 8초이며 넘기면 아무것도 쓰지 않고 끝낸다.
+- 쓰기 직전에 디스크 내용이 처음 읽은 것과 같은지 확인하고, 다르면(에이전트가 다시 고친 경우)
+  쓰지 않는다.
+
+```sh
+nvim --headless -u NONE -l scripts/format-changed.lua /절대/경로/파일
+```
 
 ## 린트
 
@@ -199,7 +248,7 @@ Helm 차트의 `templates/` 아래 YAML과 `.tpl` 파일은 `helm` 파서를 사
 
 1. `lua/treesitter.lua`의 parser 목록
 2. `lua/lsp.lua`의 서버와 Mason 패키지
-3. `lua/editing.lua`의 formatter와 linter
+3. `lua/formatting.lua`의 formatter와 `lua/editing.lua`의 linter
 4. 필요한 `vim.filetype.add()` 규칙
 5. `:TSSync`, `:LspInstallAll`, 실제 샘플 파일의 동작
 

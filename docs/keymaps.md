@@ -79,6 +79,9 @@ Neovim 0.11 기본 `grn`, `gra`, `grr`, `gri`, `grt` 매핑은 `gr` prefix 지�
 | `<leader>av` | Visual 선택 영역 전달 |
 | `<leader>ap` | 준비된 AI 프롬프트 선택 |
 | `<leader>aq` | 활성 AI agent 패널에서 detach |
+| `<leader>ar` | 현재 줄에 리뷰 의견 추가. Visual에서는 선택 범위 |
+| `<leader>aR` | 보내지 않은 리뷰 의견을 활성 AI agent 입력창에 전달 |
+| `<leader>aC` | 리뷰 의견 모두 지우기 |
 
 AI 패널 안에서는 `Ctrl-q`로 숨기고 `Ctrl-z`로 편집 창에 포커스를 돌린다. `Esc`는 Claude
 Code와 Codex TUI에 그대로 전달된다. tmux 세션까지 끝내려면 agent 안에서 `/exit`를 사용한다.
@@ -94,6 +97,7 @@ Code와 Codex TUI에 그대로 전달된다. tmux 세션까지 끝내려면 agen
 | `<leader>gb` / `gB` | 줄 blame 토글 / 전체 blame |
 | `vih`, `dih` | hunk 선택 / 삭제 |
 | `<leader>gd` / `gq` | Diffview 열기 / 닫기 |
+| `<leader>gA` | 에이전트 요청 한 건의 변경만 Diffview로 열기 (`:AgentDiff`) |
 | `<leader>gh` / `gH` | 현재 파일 / 브랜치 히스토리 |
 | `<leader>gg` | `gitui`, 없으면 `lazygit` |
 | `<leader>gc` / `gf` / `gt` | Git 로그 / 현재 파일 로그 / 상태 |

@@ -9,11 +9,33 @@ vim의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git 태그�
 
 ### Changed
 
+- 저장 시 포맷을 git HEAD 대비 바뀐 줄로 한정했다. 에이전트가 고친 파일을 저장해도 손대지
+  않은 줄이 다시 쓰이지 않는다. 새 파일, range를 못 쓰는 포매터(`terraform_fmt`,
+  `gofumpt`, `goimports`, `taplo`, `ruff_organize_imports`)는 파일 전체를 포맷한다. `shfmt`와
+  YAML `prettier`는 변경이 모두 바뀐 줄 안일 때만 적용한다. Markdown과 SQL은 포맷하지 않고
+  끝 줄바꿈이 없는 파일은 그대로 둔다. conform 설정은 `lua/formatting.lua`로 옮겼다.
+- 프로젝트 설정을 우선한다. `prettier`는 프로젝트 설정 파일이 있으면 기본 옵션을 무시하고,
+  `shfmt`는 `.editorconfig`가 있으면 스타일 플래그를 주지 않는다.
+- Sidekick 패널 너비를 화면의 40%(50~72열)로 정하고 창 크기 변경 때 다시 계산한다.
+  창 균등화(`wincmd =`)가 Diffview 파일 패널과 Sidekick 너비를 바꾸지 않는다.
+- Diffview는 140칸 미만에서 세로 diff, 100칸 미만에서 파일 패널을 닫은 채 연다.
+- `terraform-ls` 로그를 `stdpath("log")`의 전용 파일로 돌려 `lsp.log`가 불어나지 않게 했다.
+
 - tmux 설정·TPM 참고 잠금 파일·관리 문서를 `terminal-config`로 이전했다.
   Neovim 설치·업그레이드·제거에서 tmux 관리를 분리하고 `--with-tmux`를 제거했다.
   Neovim 내부 tmux navigator와 Sidekick 연동은 유지한다.
 
 ### Added
+
+- `:AgentDiff` / `<leader>gA`: tmux 에이전트 pane의 요청 시점 스냅샷과 작업 트리를 Diffview로
+  비교하고, gitsigns 기준을 스냅샷으로 바꾸며, 바뀐 hunk를 quickfix에 채운다. 켜져 있는 동안
+  상태줄에 `base:agent`가 보인다. `:AgentDiff off`로 해제한다.
+- 리뷰 의견: `<leader>ar`로 줄·범위에 의견을 달고 `<leader>aR`로 한 번에 활성 AI CLI 입력창에
+  전달(Enter는 누르지 않음), `<leader>aC`로 지운다. 상태줄에 `의견 N`을 표시한다.
+- `scripts/format-changed.lua`: 에이전트 훅에서 한 파일의 바뀐 줄만 포맷하는 헤드리스 스크립트
+  (`nvim --headless -u NONE -l scripts/format-changed.lua <파일>`, 항상 종료 코드 0). git 저장소
+  밖의 파일은 건너뛰고, 8초 기한이 있으며, 쓰기 직전 디스크 내용이 바뀌었으면 쓰지 않는다.
+- `tests/`의 헤드리스 시험(포맷 range, AgentDiff 해석, 리뷰 의견, 너비별 배치).
 
 - `manage.sh install|upgrade|uninstall`로 Neovim 설정 설치, 적용, fast-forward 업그레이드,
   데이터 보존 제거를 제공. 업그레이드는 저장소의 플러그인 잠금 버전을 적용한다.
@@ -86,6 +108,8 @@ vim의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git 태그�
 
 ### Fixed
 
+- macOS에서 `scripts/test-manage.sh`가 `/var`와 `/private/var` 경로 차이로 실패하던 문제.
+- `terraform-ls`가 stderr로 쓰는 로그가 `lsp.log`에 ERROR로 쌓여 파일이 수백 MB로 커지던 문제.
 - `.alloy`와 Helm 차트 템플릿에서 주석 토글(`gc`, `gcc`)이 아무 일도 하지 않던 문제.
   이 설정이 직접 만든 filetype이라 대응하는 ftplugin이 없어 `commentstring`이 비어
   있었다. `ftplugin/alloy.vim`은 `// %s`를, `ftplugin/helm.vim`은 `# %s`를 채운다.

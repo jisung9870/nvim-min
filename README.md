@@ -108,12 +108,16 @@ lua/
   treesitter.lua      파서 설치 + FileType에서 하이라이트/폴드/들여쓰기
   lsp.lua             vim.lsp.config / vim.lsp.enable + mason
   completion.lua      blink.cmp
-  editing.lua         포맷 / 린트 / 괄호 / surround / 한영전환 / which-key
+  editing.lua         린트 / 괄호 / surround / 한영전환 / which-key
+  formatting.lua      conform 설정 + 저장 시 바뀐 줄만 포맷 (headless 스크립트와 공유)
   markdown.lua        Markdown 내부 렌더링 + 체크박스·콜아웃 완성
   finder.lua          snacks picker·explorer + 검색 키맵
-  git.lua             gitsigns + diffview
+  git.lua             gitsigns + diffview (너비에 맞춘 레이아웃)
+  agent_diff.lua      :AgentDiff — 에이전트 요청 한 건의 변경만 보기
   terminal.lua        toggleterm + tmux navigator
   ai.lua              Sidekick + Claude Code/Codex 우측 패널
+  review.lua          코드 줄 리뷰 의견을 모아 에이전트에 한 번에 전달
+  layout.lua          화면 너비별 Sidekick 너비·Diffview 레이아웃, 리사이즈 처리
   workspace.lua       cwd별 세션 자동 복원 + 프로젝트 스크래치 메모
   keymaps.lua         플러그인과 무관한 키맵
   autocmds.lua        autocmd + filetype 감지
@@ -346,6 +350,9 @@ picker/grep은 `node_modules` `.terraform` `.terragrunt-cache` `vendor` `__pycac
 | `<leader>av` (Visual) | 선택 영역 전달 |
 | `<leader>ap` | 리뷰·설명·수정·테스트 프롬프트 선택 |
 | `<leader>aq` | 활성 AI agent 패널에서 detach |
+| `<leader>ar` | 현재 줄(Visual은 선택 범위)에 리뷰 의견 추가 |
+| `<leader>aR` | 보내지 않은 리뷰 의견을 활성 AI agent 입력창에 전달 (Enter는 직접) |
+| `<leader>aC` | 리뷰 의견 모두 지우기 |
 
 패널 안에서는 `Ctrl-q`로 숨기고 `Ctrl-z`로 편집 창에 돌아간다. AI가 디스크의 파일을
 수정하면 Neovim이 변경을 감지해 다시 읽는다. tmux가 설치되어 있으면 패널을 숨기거나
@@ -362,6 +369,7 @@ Suggestions는 사용하지 않는다.
 | `<leader>gs` / `gr` | hunk stage / reset (visual 선택 범위도 됨) |
 | `<leader>gp` / `gb` | hunk 미리보기 / blame 토글 |
 | `<leader>gd` / `gh` / `gH` | diffview 열기 / 파일 히스토리 / 브랜치 히스토리 |
+| `<leader>gA` | 에이전트 요청 한 건의 변경만 diffview로 열기 (`:AgentDiff`) |
 | `<leader>gc` / `gf` / `gt` | 커밋 로그 / 현재 파일 로그 / status |
 | `vih` `dih` | hunk 텍스트 오브젝트 |
 
@@ -410,6 +418,7 @@ gitui나 Claude Code처럼 ESC를 직접 받아야 하는 TUI는 영향받지 �
 | `:GoBuildTags [태그]` | gopls 빌드 태그 설정 후 재시작 (인자 없으면 해제) |
 | `:Mason` | mason UI |
 | `:FormatToggle[!]` | 자동 포맷 토글 (`!`는 현재 버퍼만) |
+| `:AgentDiff` / `:AgentDiff off` | 에이전트 요청 스냅샷 대비 diff 열기 / gitsigns 기준 해제 |
 | `:JenkinsLint` | 현재 파일을 Jenkins 서버로 검증 |
 | `:SessionSave` / `:SessionRestore` | 현재 cwd의 Neovim 세션 저장 / 복원 |
 | `:ProjectScratch` | 현재 cwd 전용 Markdown 스크래치 메모 열기 |

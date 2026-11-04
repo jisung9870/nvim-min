@@ -53,6 +53,7 @@ Neovim은 다시 시작해야 한다. 설치 직후
 | `:LspInstallAll` | 빠진 Mason 패키지 설치 | Mason 외부 도구는 별도 설치 |
 | `:FormatToggle` | 전역 저장 시 포맷 토글 | 수동 `<leader>cf`에는 영향 없음 |
 | `:FormatToggle!` | 현재 버퍼 저장 시 포맷 토글 | 버퍼를 닫으면 버퍼 상태 소멸 |
+| `:AgentDiff` | tmux pane의 에이전트 스냅샷과 작업 트리를 Diffview로 비교 | tmux 안에서만 동작; `:AgentDiff off`로 gitsigns 기준 복원 |
 | `:SessionSave` | 현재 cwd의 창·탭·파일 버퍼 저장 | 파일 내용 자체는 먼저 저장해야 함 |
 | `:SessionRestore` | 현재 cwd의 마지막 편집기 세션 복원 | 현재 창 레이아웃이 저장된 레이아웃으로 바뀜 |
 | `:ProjectScratch` | 현재 cwd의 Markdown 메모 열기 | state 경로에 자동 저장되며 Git에는 포함되지 않음 |
@@ -147,6 +148,17 @@ Neovim 안에서 다음을 실행한다.
 
 Mason이 관리하지 않는 `tflint`, `terraform`, `goimports`, `gofumpt`, `alloy`, `gitui` 같은
 도구는 머신 패키지 관리자로 별도 설치한다. `lua/local.lua`도 새 머신 정책에 맞게 다시 만든다.
+
+## 시험 실행
+
+순수 로직(hunk→range 계산, 의견 메시지 형식, 너비별 배치, 스냅샷 해석)은 헤드리스로
+시험한다. 저장소 루트에서 실행하며 실패하면 종료 코드가 0이 아니다.
+
+```sh
+for t in tests/*.lua; do nvim --headless -u NONE -l "$t" || exit 1; done
+sh scripts/test-manage.sh      # 설치·업그레이드·제거 수명주기
+stylua --check lua init.lua scripts tests
+```
 
 ## 변경 전후 검증 체크리스트
 
