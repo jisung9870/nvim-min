@@ -96,3 +96,5 @@ end, { desc = "Select AI prompt" })
 map("n", "<leader>aq", function()
   cli.close()
 end, { desc = "Detach AI agent" })
+
+require("review")

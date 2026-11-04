@@ -121,6 +121,15 @@ local function agent_base()
   return "%#StGitChange# base:agent%#StBase# "
 end
 
+-- 보내지 않은 리뷰 의견 수
+local function review()
+  local n = require("review").pending_count()
+  if n == 0 then
+    return ""
+  end
+  return ("%%#StDiagWarn# 의견 %d%%#StBase# "):format(n)
+end
+
 -- 파일 경로 -----------------------------------------------------------------
 local function file()
   local name = vim.fn.expand("%:.")
@@ -198,6 +207,7 @@ function M.render()
     mode(),
     git(),
     agent_base(),
+    review(),
     file(),
     "%=", -- 여기서 좌/우 분리
     diagnostics(),
