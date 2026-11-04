@@ -15,66 +15,10 @@ require("mini.pairs").setup({
 require("mini.surround").setup()
 
 -- 포맷 (conform) ------------------------------------------------------------
-require("conform").setup({
-  formatters_by_ft = {
-    go = { "goimports", "gofumpt" },
-    terraform = { "terraform_fmt" },
-    tf = { "terraform_fmt" },
-    ["terraform-vars"] = { "terraform_fmt" },
-    alloy = { "alloy_space" },
-    sh = { "shfmt" },
-    bash = { "shfmt" },
-    lua = { "stylua" },
-    toml = { "taplo" },
-    python = { "ruff_organize_imports", "ruff_format" },
-    -- SQL은 의도적으로 비워 둔다. sqlfluff fix는 쿼리를 크게 다시 쓰므로
-    -- 저장할 때마다 돌리기엔 위험하다. 진단만 받고, 고칠 때는 직접 부른다.
-    sql = {},
-    json = { "prettier" },
-    jsonc = { "prettier" },
-    yaml = { "prettier" },
-    markdown = {}, -- 의도적 공백 보존 — 포맷 안 함
-    ["_"] = { "trim_whitespace" },
-  },
-
-  formatters = {
-    shfmt = { prepend_args = { "-i", "2", "-ci" } },
-    prettier = {
-      prepend_args = { "--tab-width", "2", "--no-semi", "--single-quote" },
-    },
-    -- Grafana Alloy: alloy fmt이 탭을 쓰므로 스페이스로 편다
-    alloy_space = {
-      command = "sh",
-      args = { "-c", "alloy fmt - | expand -t 2" },
-      stdin = true,
-      condition = function()
-        return vim.fn.executable("alloy") == 1
-      end,
-    },
-  },
-
-  format_on_save = function(bufnr)
-    -- vim.b.autoformat = false 인 버퍼, 큰 파일은 건너뛴다
-    if vim.b[bufnr].autoformat == false or vim.g.autoformat == false then
-      return nil
-    end
-    local ok, stat = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(bufnr))
-    if ok and stat and stat.size > 256 * 1024 then
-      return nil
-    end
-    return { timeout_ms = 3000, lsp_format = "fallback" }
-  end,
-})
-
-vim.api.nvim_create_user_command("FormatToggle", function(args)
-  if args.bang then
-    vim.b.autoformat = vim.b.autoformat == false
-    vim.notify("버퍼 자동 포맷: " .. tostring(vim.b.autoformat ~= false))
-  else
-    vim.g.autoformat = vim.g.autoformat == false
-    vim.notify("전역 자동 포맷: " .. tostring(vim.g.autoformat ~= false))
-  end
-end, { bang = true, desc = "자동 포맷 토글 (!는 현재 버퍼만)" })
+-- 설정과 저장 시 "바뀐 줄만 포맷" 로직은 lua/formatting.lua에 있다.
+local formatting = require("formatting")
+formatting.setup()
+formatting.attach()
 
 -- 린트 (nvim-lint) ----------------------------------------------------------
 -- LSP가 진단을 못 주는 영역만 채운다.
