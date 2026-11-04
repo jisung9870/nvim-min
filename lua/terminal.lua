@@ -66,6 +66,19 @@ map("n", "<leader>tp", function()
   }):toggle()
 end, { desc = "Tmux project sessionizer" })
 
+-- 단축키 카드: tmux 안이면 terminal-config의 Ctrl+B / 팝업, 아니면 키맵 picker
+map("n", "<leader>?", function()
+  local run = vim.fn.expand("~/.local/share/wezterm-agent/run.sh")
+  if vim.env.TMUX and vim.fn.filereadable(run) == 1 then
+    local client = vim.trim(vim.fn.system({ "tmux", "display-message", "-p", "#{client_name}" }))
+    if vim.v.shell_error == 0 and client ~= "" then
+      vim.fn.jobstart({ "sh", run, "popup", "keys", client }, { detach = true })
+      return
+    end
+  end
+  Snacks.picker.keymaps()
+end, { desc = "Shortcut cards" })
+
 -- vim-tmux-navigator: 플러그인이 기본 매핑을 만들지 않도록 하고 직접 건다
 vim.g.tmux_navigator_no_mappings = 1
 map({ "n", "t" }, "<C-h>", "<cmd>TmuxNavigateLeft<cr>", { desc = "Go left (window/pane)" })

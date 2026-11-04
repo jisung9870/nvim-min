@@ -111,6 +111,7 @@ Code와 Codex TUI에 그대로 전달된다. tmux 세션까지 끝내려면 agen
 | `<C-\\>` | Normal, Terminal | 기본 floating terminal 토글 |
 | `<leader>th` / `tv` / `tf` | Normal | 가로 / 세로 / floating terminal |
 | `<leader>tp` | Normal | `bb tm` 프로젝트 세션 전환기 |
+| `<leader>?` | Normal | 단축키 카드 팝업. tmux 안에서는 terminal-config의 `Ctrl+B /` 팝업, 밖에서는 키맵 검색 |
 | `<C-h/j/k/l>` | Normal, Terminal | Neovim 창과 tmux pane 사이 이동 |
 | `<Esc>` | toggleterm Terminal | Terminal 모드 나가기 |
 

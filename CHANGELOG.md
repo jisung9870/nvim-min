@@ -27,6 +27,8 @@ vim의 사용자 영향 변경을 이 문서에 기록한다. 아직 Git 태그�
 
 ### Added
 
+- `<leader>?`: tmux 안에서 terminal-config의 단축키 카드 팝업을 연다. tmux 밖이거나 terminal-config가
+  없으면 키맵 검색(`<leader>sk`)을 연다.
 - `:AgentDiff` / `<leader>gA`: tmux 에이전트 pane의 요청 시점 스냅샷과 작업 트리를 Diffview로
   비교하고, gitsigns 기준을 스냅샷으로 바꾸며, 바뀐 hunk를 quickfix에 채운다. 켜져 있는 동안
   상태줄에 `base:agent`가 보인다. `:AgentDiff off`로 해제한다.
