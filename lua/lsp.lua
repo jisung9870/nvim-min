@@ -305,7 +305,10 @@ vim.lsp.config("bashls", {
 
 -- nvim-lspconfig의 terraformls 기본 on_attach는 CodeLens를 버퍼별로 다시
 -- 활성화한다. Neovim 0.12의 stale range decoration 오류를 피하도록 덮어쓴다.
+-- terraform-ls는 기본으로 로그를 stderr에 쓰고, Neovim이 이를 lsp.log에 ERROR로 쌓는다.
+-- 전용 로그 파일로 돌려 lsp.log가 불어나지 않게 한다.
 vim.lsp.config("terraformls", {
+  cmd = { "terraform-ls", "serve", "-log-file", vim.fs.joinpath(vim.fn.stdpath("log"), "terraform-ls-{{pid}}.log") },
   on_attach = function(_, bufnr)
     vim.lsp.codelens.enable(false, { bufnr = bufnr })
   end,
