@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 root=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd -P)
-work=$(mktemp -d)
+work=$(CDPATH='' cd -- "$(mktemp -d)" && pwd -P)
 trap 'rm -rf "$work"' EXIT HUP INT TERM
 export HOME="$work/home" XDG_CONFIG_HOME="$work/home/.config"
 mkdir -p "$HOME" "$work/source/scripts" "$work/bin"
