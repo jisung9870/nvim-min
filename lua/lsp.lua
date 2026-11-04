@@ -303,7 +303,16 @@ vim.lsp.config("bashls", {
   filetypes = { "sh", "bash" },
 })
 
+-- nvim-lspconfig의 terraformls 기본 on_attach는 CodeLens를 버퍼별로 다시
+-- 활성화한다. Neovim 0.12의 stale range decoration 오류를 피하도록 덮어쓴다.
+vim.lsp.config("terraformls", {
+  on_attach = function(_, bufnr)
+    vim.lsp.codelens.enable(false, { bufnr = bufnr })
+  end,
+})
+
 vim.lsp.enable(servers)
+vim.lsp.codelens.enable(false)
 
 -- 버퍼별 LSP 키맵 -----------------------------------------------------------
 -- nvim 0.11 기본 매핑으로 이미 있는 것: grn(rename), gra(code action),
