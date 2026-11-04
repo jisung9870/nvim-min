@@ -75,8 +75,11 @@ require("diffview").setup({
   },
 })
 
+require("agent_diff")
+
 local map = vim.keymap.set
 map("n", "<leader>gd", "<cmd>DiffviewOpen<cr>", { desc = "Diffview: open" })
+map("n", "<leader>gA", "<cmd>AgentDiff<cr>", { desc = "Diffview: agent request diff" })
 map("n", "<leader>gh", "<cmd>DiffviewFileHistory %<cr>", { desc = "Diffview: file history" })
 map("n", "<leader>gH", "<cmd>DiffviewFileHistory<cr>", { desc = "Diffview: branch history" })
 map("n", "<leader>gq", "<cmd>DiffviewClose<cr>", { desc = "Diffview: close" })

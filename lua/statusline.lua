@@ -113,6 +113,14 @@ local function git()
   return table.concat(parts) .. "%#StBase# "
 end
 
+-- AgentDiff가 켜져 있으면 gitsigns 기준이 에이전트 스냅샷이다
+local function agent_base()
+  if not require("agent_diff").active() then
+    return ""
+  end
+  return "%#StGitChange# base:agent%#StBase# "
+end
+
 -- 파일 경로 -----------------------------------------------------------------
 local function file()
   local name = vim.fn.expand("%:.")
@@ -189,6 +197,7 @@ function M.render()
   return table.concat({
     mode(),
     git(),
+    agent_base(),
     file(),
     "%=", -- 여기서 좌/우 분리
     diagnostics(),
