@@ -35,9 +35,9 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 vim.api.nvim_create_autocmd("VimResized", {
   group = augroup("resize_splits"),
   callback = function()
-    local tab = vim.api.nvim_get_current_tabpage()
-    vim.cmd("tabdo wincmd =")
-    vim.api.nvim_set_current_tabpage(tab)
+    local layout = require("layout")
+    layout.update_sidekick_width()
+    layout.equalize() -- winfixwidth 창(diffview 파일 패널, sidekick)은 너비를 유지한다
   end,
 })
 

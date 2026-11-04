@@ -218,7 +218,7 @@ local function activate(snapshot, root)
   vim.fn.setqflist({}, " ", { title = title, items = items })
 
   -- Diffview도 같은 기준이다. 오른쪽은 이 트리의 스냅샷이므로 열고 난 뒤의 편집은 반영되지 않는다.
-  vim.cmd("DiffviewOpen " .. sha .. ".." .. tree)
+  require("git").open_diffview(sha .. ".." .. tree)
   vim.cmd.redrawstatus()
   notify(
     ("%s 이후 %d개 파일이 바뀌었다. 변경 위치는 quickfix에 있다."):format(

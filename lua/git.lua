@@ -63,22 +63,58 @@ require("gitsigns").setup({
 })
 
 -- diffview -------------------------------------------------------------------
-require("diffview").setup({
-  enhanced_diff_hl = true,
-  view = {
-    default = { layout = "diff2_horizontal" },
-    merge_tool = { layout = "diff3_horizontal" },
-  },
-  file_panel = {
-    listing_style = "tree",
-    win_config = { position = "left", width = 35 },
-  },
-})
+-- 화면이 좁으면 diff를 세로로 놓고, 더 좁으면 파일 패널을 닫은 채 연다.
+-- 열 때마다 현재 너비로 setup을 다시 해서 레이아웃을 정한다.
+local close_panel_on_open = false
+
+local function setup_diffview(layout)
+  require("diffview").setup({
+    enhanced_diff_hl = true,
+    view = {
+      default = { layout = layout },
+      merge_tool = { layout = "diff3_horizontal" },
+    },
+    file_panel = {
+      listing_style = "tree",
+      win_config = { position = "left", width = 35 },
+    },
+    hooks = {
+      view_opened = function(view)
+        if close_panel_on_open and view.panel and view.panel.close then
+          close_panel_on_open = false
+          vim.schedule(function()
+            pcall(function()
+              view.panel:close()
+            end)
+          end)
+        end
+      end,
+    },
+  })
+end
+
+setup_diffview("diff2_horizontal")
+
+local M = {}
+
+-- <leader>gd와 AgentDiff가 함께 쓰는 진입점. args는 DiffviewOpen 인자 문자열.
+function M.open_diffview(args)
+  local choice = require("layout").diffview_layout(vim.o.columns)
+  setup_diffview(choice.layout)
+  close_panel_on_open = not choice.panel_open
+  local ok, err = pcall(vim.cmd, "DiffviewOpen" .. ((args and args ~= "") and (" " .. args) or ""))
+  close_panel_on_open = false
+  if not ok then
+    vim.notify(tostring(err), vim.log.levels.ERROR)
+  end
+end
 
 require("agent_diff")
 
 local map = vim.keymap.set
-map("n", "<leader>gd", "<cmd>DiffviewOpen<cr>", { desc = "Diffview: open" })
+map("n", "<leader>gd", function()
+  M.open_diffview()
+end, { desc = "Diffview: open" })
 map("n", "<leader>gA", "<cmd>AgentDiff<cr>", { desc = "Diffview: agent request diff" })
 map("n", "<leader>gh", "<cmd>DiffviewFileHistory %<cr>", { desc = "Diffview: file history" })
 map("n", "<leader>gH", "<cmd>DiffviewFileHistory<cr>", { desc = "Diffview: branch history" })
@@ -100,3 +136,5 @@ end, { desc = "Git log (this file)" })
 map("n", "<leader>gt", function()
   Snacks.picker.git_status()
 end, { desc = "Git status" })
+
+return M

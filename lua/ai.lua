@@ -10,7 +10,7 @@ require("sidekick").setup({
     watch = true,
     win = {
       layout = "right",
-      split = { width = 72, height = 0 },
+      split = { width = require("layout").sidekick_width(vim.o.columns), height = 0 },
       keys = {
         hide_ctrl_q = { "<c-q>", "hide", mode = { "n", "t" }, desc = "hide the AI panel" },
         stopinsert = false,
